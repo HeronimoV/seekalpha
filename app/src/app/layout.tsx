@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { WalletProvider } from "@/components/WalletProvider";
+import { ToastProvider } from "@/components/Toast";
 import { Navbar } from "@/components/Navbar";
 import "./globals.css";
 
@@ -31,6 +32,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="min-h-screen">
         <WalletProvider>
+          <ToastProvider>
           <Navbar />
           <main className="max-w-6xl mx-auto px-4">{children}</main>
           <footer className="border-t border-seek-border mt-16 py-10 px-4">
@@ -72,6 +74,7 @@ export default function RootLayout({
               </div>
             </div>
           </footer>
+        </ToastProvider>
         </WalletProvider>
       </body>
     </html>
