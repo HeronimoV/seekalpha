@@ -125,6 +125,20 @@ export const BetSuccess: FC<BetSuccessProps> = ({
             ⛓️ View on Solana Explorer →
           </a>
 
+          {/* Share to X */}
+          <a
+            href={`https://x.com/intent/tweet?text=${encodeURIComponent(
+              isWin
+                ? `🏆 Just won ${potentialPayout.toFixed(3)} SOL on SeekAlpha!\n\n"${marketTitle}"\n\nI predicted ${position ? "YES" : "NO"} and was RIGHT 💰\n\nPredict & earn on Solana 👇\nhttps://seekalpha.bet\n\n@Seek_Alpha_`
+                : `🔮 Just placed a prediction on SeekAlpha!\n\n"${marketTitle}"\n\nI'm betting ${position ? "YES 🟢" : "NO 🔴"} with ${amount.toFixed(3)} SOL\n\nThink you know better? 👇\nhttps://seekalpha.bet\n\n@Seek_Alpha_`
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-full py-3 rounded-xl font-semibold text-sm text-center transition active:scale-[0.98] bg-black text-white hover:bg-gray-900 mb-3"
+          >
+            𝕏 Share to X
+          </a>
+
           {/* Close Button */}
           <button
             onClick={onClose}
