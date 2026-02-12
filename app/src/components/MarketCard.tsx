@@ -1,8 +1,8 @@
 "use client";
 
-import { FC, useState, useCallback } from "react";
+import { FC, useState, useCallback, useMemo } from "react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
-import { Market } from "@/lib/constants";
+import { Market, PLATFORM_FEE_BPS } from "@/lib/constants";
 import { buildPlacePredictionTx, getBalance } from "@/lib/program";
 
 interface MarketCardProps {
@@ -31,6 +31,37 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
     return `${hours}h left`;
   };
 
+  // Calculate potential payouts
+  const payouts = useMemo(() => {
+    const amount = parseFloat(betAmount);
+    if (isNaN(amount) || amount <= 0) return null;
+
+    const fee = PLATFORM_FEE_BPS / 10000; // 0.03
+
+    // If you bet YES: your share of total pool (proportional to your stake in YES pool)
+    const newYesPool = market.yesPool + amount;
+    const newNoPool = market.noPool + amount;
+    const totalIfYes = newYesPool + market.noPool;
+    const totalIfNo = market.yesPool + newNoPool;
+
+    const grossYes = (amount / newYesPool) * totalIfYes;
+    const grossNo = (amount / newNoPool) * totalIfNo;
+
+    const netYes = grossYes * (1 - fee);
+    const netNo = grossNo * (1 - fee);
+
+    const profitYes = netYes - amount;
+    const profitNo = netNo - amount;
+
+    const multiplierYes = netYes / amount;
+    const multiplierNo = netNo / amount;
+
+    return {
+      yes: { payout: netYes, profit: profitYes, multiplier: multiplierYes },
+      no: { payout: netNo, profit: profitNo, multiplier: multiplierNo },
+    };
+  }, [betAmount, market.yesPool, market.noPool]);
+
   const placeBet = useCallback(
     async (position: boolean) => {
       if (!publicKey || !connected) {
@@ -53,7 +84,6 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
         setLoading(true);
         setTxStatus("🔄 Building transaction...");
 
-        // Check balance
         const balance = await getBalance(publicKey);
         if (balance < amount + 0.01) {
           setTxStatus(`⚠️ Insufficient balance (${balance.toFixed(3)} SOL)`);
@@ -73,7 +103,6 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
         );
         setBetAmount("");
 
-        // Clear status after 5s
         setTimeout(() => {
           setTxStatus(null);
           setShowBetting(false);
@@ -93,7 +122,7 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
   );
 
   return (
-    <div className="gradient-border rounded-xl bg-seek-card p-5 hover:bg-seek-card/80 transition">
+    <div className="gradient-border rounded-xl bg-seek-card p-4 md:p-5 hover:bg-seek-card/80 transition">
       {/* Category + Time */}
       <div className="flex items-center justify-between mb-3">
         <span className="text-xs px-2 py-0.5 rounded-full bg-seek-teal/20 text-seek-teal">
@@ -103,7 +132,7 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
       </div>
 
       {/* Title */}
-      <h3 className="text-lg font-semibold mb-2 leading-tight">{market.title}</h3>
+      <h3 className="text-base md:text-lg font-semibold mb-2 leading-tight">{market.title}</h3>
       <p className="text-sm text-gray-400 mb-4">{market.description}</p>
 
       {/* Probability Bar */}
@@ -122,7 +151,7 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
 
       {/* Pool Info */}
       <div className="flex justify-between text-sm text-gray-400 mb-4">
-        <span>💰 Total Pool: {totalPool.toFixed(1)} SOL</span>
+        <span>💰 Pool: {totalPool.toFixed(1)} SOL</span>
         <span>👥 {Math.floor(totalPool / 0.5)} predictions</span>
       </div>
 
@@ -130,39 +159,23 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
       {!showBetting ? (
         <button
           onClick={() => setShowBetting(true)}
-          className="w-full py-2.5 rounded-lg bg-gradient-to-r from-seek-purple to-seek-teal text-white font-medium text-sm hover:opacity-90 transition"
+          className="w-full py-2.5 rounded-lg bg-gradient-to-r from-seek-purple to-seek-teal text-white font-medium text-sm hover:opacity-90 transition active:scale-[0.98]"
         >
           🔮 Make a Prediction
         </button>
       ) : (
         <div className="space-y-3">
-          <div className="flex gap-2">
+          <div>
             <input
               type="number"
               placeholder="Amount in SOL"
               value={betAmount}
               onChange={(e) => setBetAmount(e.target.value)}
-              className="flex-1 bg-seek-dark border border-seek-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-seek-purple"
+              className="w-full bg-seek-dark border border-seek-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-seek-purple"
               min="0.01"
               step="0.01"
               disabled={loading}
             />
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => placeBet(true)}
-              disabled={loading}
-              className="flex-1 py-2.5 rounded-lg btn-yes text-white font-medium text-sm transition disabled:opacity-50"
-            >
-              {loading ? "..." : "🟢 YES"}
-            </button>
-            <button
-              onClick={() => placeBet(false)}
-              disabled={loading}
-              className="flex-1 py-2.5 rounded-lg btn-no text-white font-medium text-sm transition disabled:opacity-50"
-            >
-              {loading ? "..." : "🔴 NO"}
-            </button>
           </div>
 
           {/* Quick amounts */}
@@ -171,11 +184,64 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
               <button
                 key={amt}
                 onClick={() => setBetAmount(amt.toString())}
-                className="flex-1 py-1 rounded text-xs bg-seek-dark border border-seek-border text-gray-400 hover:text-white hover:border-seek-purple transition"
+                className="flex-1 py-1.5 rounded text-xs bg-seek-dark border border-seek-border text-gray-400 hover:text-white hover:border-seek-purple transition"
               >
                 {amt} SOL
               </button>
             ))}
+          </div>
+
+          {/* Payout Preview */}
+          {payouts && (
+            <div className="bg-seek-dark border border-seek-border rounded-lg p-3 space-y-2">
+              <div className="text-xs text-gray-500 font-medium mb-1">💰 Estimated Payouts (after 3% fee)</div>
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-seek-teal"></span>
+                  <span className="text-xs text-gray-400">If YES wins:</span>
+                </div>
+                <div className="text-right">
+                  <span className="text-sm font-semibold text-seek-teal">
+                    {payouts.yes.payout.toFixed(3)} SOL
+                  </span>
+                  <span className="text-xs text-green-400 ml-2">
+                    +{payouts.yes.profit.toFixed(3)} ({payouts.yes.multiplier.toFixed(2)}x)
+                  </span>
+                </div>
+              </div>
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-red-400"></span>
+                  <span className="text-xs text-gray-400">If NO wins:</span>
+                </div>
+                <div className="text-right">
+                  <span className="text-sm font-semibold text-red-400">
+                    {payouts.no.payout.toFixed(3)} SOL
+                  </span>
+                  <span className="text-xs text-green-400 ml-2">
+                    +{payouts.no.profit.toFixed(3)} ({payouts.no.multiplier.toFixed(2)}x)
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* YES / NO buttons */}
+          <div className="flex gap-2">
+            <button
+              onClick={() => placeBet(true)}
+              disabled={loading}
+              className="flex-1 py-2.5 rounded-lg btn-yes text-white font-medium text-sm transition disabled:opacity-50"
+            >
+              {loading ? "..." : `🟢 YES${payouts ? ` (${payouts.yes.multiplier.toFixed(2)}x)` : ""}`}
+            </button>
+            <button
+              onClick={() => placeBet(false)}
+              disabled={loading}
+              className="flex-1 py-2.5 rounded-lg btn-no text-white font-medium text-sm transition disabled:opacity-50"
+            >
+              {loading ? "..." : `🔴 NO${payouts ? ` (${payouts.no.multiplier.toFixed(2)}x)` : ""}`}
+            </button>
           </div>
 
           {txStatus && (

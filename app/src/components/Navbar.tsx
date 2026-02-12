@@ -35,7 +35,7 @@ export const Navbar: FC = () => {
       <div className="flex items-center justify-between px-4 md:px-6 py-3">
         {/* Logo */}
         <a href="/" className="flex items-center gap-2 shrink-0">
-          <img src="/logo.jpg" alt="SeekAlpha" className="w-8 h-8 rounded-full" />
+          <img src="/logo.jpg" alt="SeekAlpha" className="w-10 h-10 md:w-12 md:h-12 rounded-full" />
           <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-seek-purple to-seek-teal bg-clip-text text-transparent">
             SeekAlpha
           </span>
