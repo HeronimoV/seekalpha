@@ -41,13 +41,13 @@ export const Navbar: FC = () => {
       </div>
 
       <div className="flex items-center gap-6">
-        <a href="#" className="text-sm text-gray-400 hover:text-white transition hidden md:block">
+        <a href="/" className="text-sm text-gray-400 hover:text-white transition hidden md:block">
           Markets
         </a>
-        <a href="#" className="text-sm text-gray-400 hover:text-white transition hidden md:block">
+        <a href="/portfolio" className="text-sm text-gray-400 hover:text-white transition hidden md:block">
           Portfolio
         </a>
-        <a href="#" className="text-sm text-gray-400 hover:text-white transition hidden md:block">
+        <a href="/leaderboard" className="text-sm text-gray-400 hover:text-white transition hidden md:block">
           Leaderboard
         </a>
         {connected && balance !== null && (
