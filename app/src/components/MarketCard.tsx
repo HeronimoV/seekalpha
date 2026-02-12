@@ -5,6 +5,7 @@ import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { AnchorProvider } from "@coral-xyz/anchor";
 import { PLATFORM_FEE_BPS } from "@/lib/constants";
 import { OnChainMarket, buildPlacePredictionTx, getBalance } from "@/lib/program";
+import { BetSuccess } from "./BetSuccess";
 
 interface MarketCardProps {
   market: OnChainMarket & { category: string };
@@ -15,6 +16,8 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
   const [showBetting, setShowBetting] = useState(false);
   const [loading, setLoading] = useState(false);
   const [txStatus, setTxStatus] = useState<string | null>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [lastBet, setLastBet] = useState<{position: boolean; amount: number; payout: number; sig: string}>({position: true, amount: 0, payout: 0, sig: ""});
   const { publicKey, signTransaction, signAllTransactions, connected } = useWallet();
   const { connection } = useConnection();
 
@@ -110,17 +113,13 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
         const signature = await connection.sendRawTransaction(signedTx.serialize());
         await connection.confirmTransaction(signature, "confirmed");
 
-        setTxStatus(
-          `✅ ${position ? "YES" : "NO"} prediction placed! ${amount} SOL on-chain 🔗`
-        );
+        // Calculate payout for display
+        const payout = payouts ? (position ? payouts.yes.payout : payouts.no.payout) : amount;
+        setLastBet({ position, amount, payout, sig: signature });
+        setShowSuccess(true);
+        setTxStatus(null);
         setBetAmount("");
-
-        setTimeout(() => {
-          setTxStatus(null);
-          setShowBetting(false);
-          // Trigger a refresh
-          window.location.reload();
-        }, 3000);
+        setShowBetting(false);
       } catch (err: any) {
         console.error("Transaction failed:", err);
         if (err.message?.includes("User rejected")) {
@@ -292,6 +291,19 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
           </button>
         </div>
       )}
+      <BetSuccess
+        show={showSuccess}
+        marketTitle={market.title}
+        position={lastBet.position}
+        amount={lastBet.amount}
+        potentialPayout={lastBet.payout}
+        txSignature={lastBet.sig}
+        variant="bet"
+        onClose={() => {
+          setShowSuccess(false);
+          window.location.reload();
+        }}
+      />
     </div>
   );
 };
