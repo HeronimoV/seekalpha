@@ -55,6 +55,9 @@ export const Navbar: FC = () => {
           <a href="/leaderboard" className="text-sm text-gray-400 hover:text-white transition">
             Leaderboard
           </a>
+          <a href="/about" className="text-sm text-gray-400 hover:text-white transition">
+            About
+          </a>
           {connected && balance !== null && (
             <span className="text-sm text-seek-teal font-medium">
               {balance.toFixed(2)} SOL
@@ -97,6 +100,12 @@ export const Navbar: FC = () => {
           </a>
           <a href="/leaderboard" className="block py-2 text-sm text-gray-400 hover:text-white" onClick={() => setMenuOpen(false)}>
             🏆 Leaderboard
+          </a>
+          <a href="/about" className="block py-2 text-sm text-gray-400 hover:text-white" onClick={() => setMenuOpen(false)}>
+            ℹ️ About
+          </a>
+          <a href="/faq" className="block py-2 text-sm text-gray-400 hover:text-white" onClick={() => setMenuOpen(false)}>
+            ❓ FAQ
           </a>
         </div>
       )}
