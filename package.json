@@ -9,14 +9,15 @@
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.31.1",
-    "@solana/web3.js": "^1.95.0"
+    "@solana/web3.js": "^1.98.4",
+    "@types/node": "^25.2.3"
   },
   "devDependencies": {
+    "@types/chai": "^4.3.11",
+    "@types/mocha": "^10.0.6",
     "chai": "^4.3.7",
     "mocha": "^10.2.0",
     "ts-mocha": "^10.0.0",
-    "typescript": "^5.3.0",
-    "@types/chai": "^4.3.11",
-    "@types/mocha": "^10.0.6"
+    "typescript": "^5.3.0"
   }
 }
