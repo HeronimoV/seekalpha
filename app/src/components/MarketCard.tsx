@@ -2,11 +2,12 @@
 
 import { FC, useState, useCallback, useMemo } from "react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
-import { Market, PLATFORM_FEE_BPS } from "@/lib/constants";
-import { buildPlacePredictionTx, getBalance } from "@/lib/program";
+import { AnchorProvider } from "@coral-xyz/anchor";
+import { PLATFORM_FEE_BPS } from "@/lib/constants";
+import { OnChainMarket, buildPlacePredictionTx, getBalance } from "@/lib/program";
 
 interface MarketCardProps {
-  market: Market;
+  market: OnChainMarket & { category: string };
 }
 
 export const MarketCard: FC<MarketCardProps> = ({ market }) => {
@@ -14,7 +15,7 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
   const [showBetting, setShowBetting] = useState(false);
   const [loading, setLoading] = useState(false);
   const [txStatus, setTxStatus] = useState<string | null>(null);
-  const { publicKey, sendTransaction, connected } = useWallet();
+  const { publicKey, signTransaction, signAllTransactions, connected } = useWallet();
   const { connection } = useConnection();
 
   const totalPool = market.yesPool + market.noPool;
@@ -36,9 +37,8 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
     const amount = parseFloat(betAmount);
     if (isNaN(amount) || amount <= 0) return null;
 
-    const fee = PLATFORM_FEE_BPS / 10000; // 0.03
+    const fee = PLATFORM_FEE_BPS / 10000;
 
-    // If you bet YES: your share of total pool (proportional to your stake in YES pool)
     const newYesPool = market.yesPool + amount;
     const newNoPool = market.noPool + amount;
     const totalIfYes = newYesPool + market.noPool;
@@ -64,7 +64,7 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
 
   const placeBet = useCallback(
     async (position: boolean) => {
-      if (!publicKey || !connected) {
+      if (!publicKey || !connected || !signTransaction || !signAllTransactions) {
         setTxStatus("⚠️ Connect your wallet first!");
         return;
       }
@@ -91,26 +91,42 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
           return;
         }
 
-        const tx = await buildPlacePredictionTx(publicKey, market.id, amount, position);
+        // Create an Anchor provider with the connected wallet
+        const wallet = { publicKey, signTransaction, signAllTransactions };
+        const provider = new AnchorProvider(connection, wallet as any, {
+          commitment: "confirmed",
+        });
+
+        const tx = await buildPlacePredictionTx(provider, market.id, amount, position);
         setTxStatus("✍️ Approve in your wallet...");
 
-        const signature = await sendTransaction(tx, connection);
-        setTxStatus("⏳ Confirming...");
+        const { blockhash } = await connection.getLatestBlockhash();
+        tx.recentBlockhash = blockhash;
+        tx.feePayer = publicKey;
 
+        const signedTx = await signTransaction(tx);
+        setTxStatus("⏳ Confirming on Solana...");
+
+        const signature = await connection.sendRawTransaction(signedTx.serialize());
         await connection.confirmTransaction(signature, "confirmed");
+
         setTxStatus(
-          `✅ ${position ? "YES" : "NO"} prediction placed! ${amount} SOL`
+          `✅ ${position ? "YES" : "NO"} prediction placed! ${amount} SOL on-chain 🔗`
         );
         setBetAmount("");
 
         setTimeout(() => {
           setTxStatus(null);
           setShowBetting(false);
-        }, 5000);
+          // Trigger a refresh
+          window.location.reload();
+        }, 3000);
       } catch (err: any) {
         console.error("Transaction failed:", err);
         if (err.message?.includes("User rejected")) {
           setTxStatus("❌ Transaction cancelled");
+        } else if (err.message?.includes("already in use")) {
+          setTxStatus("⚠️ You already have a prediction on this market!");
         } else {
           setTxStatus("❌ Transaction failed — try again");
         }
@@ -118,8 +134,10 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
         setLoading(false);
       }
     },
-    [publicKey, connected, betAmount, market.id, sendTransaction, connection]
+    [publicKey, connected, signTransaction, signAllTransactions, betAmount, market.id, connection]
   );
+
+  const isExpired = market.resolutionTime.getTime() < Date.now();
 
   return (
     <div className="gradient-border rounded-xl bg-seek-card p-4 md:p-5 hover:bg-seek-card/80 transition">
@@ -128,7 +146,16 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
         <span className="text-xs px-2 py-0.5 rounded-full bg-seek-teal/20 text-seek-teal">
           {market.category}
         </span>
-        <span className="text-xs text-gray-500">{timeLeft()}</span>
+        <div className="flex items-center gap-2">
+          {market.resolved && (
+            <span className={`text-xs px-2 py-0.5 rounded-full ${
+              market.outcome ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400"
+            }`}>
+              {market.outcome ? "✅ YES" : "❌ NO"}
+            </span>
+          )}
+          <span className="text-xs text-gray-500">{timeLeft()}</span>
+        </div>
       </div>
 
       {/* Title */}
@@ -151,12 +178,16 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
 
       {/* Pool Info */}
       <div className="flex justify-between text-sm text-gray-400 mb-4">
-        <span>💰 Pool: {totalPool.toFixed(1)} SOL</span>
-        <span>👥 {Math.floor(totalPool / 0.5)} predictions</span>
+        <span>💰 Pool: {totalPool.toFixed(2)} SOL</span>
+        <span className="text-xs text-seek-teal/60">⛓️ on-chain</span>
       </div>
 
       {/* Bet Section */}
-      {!showBetting ? (
+      {market.resolved || isExpired ? (
+        <div className="w-full py-2.5 rounded-lg bg-gray-800 text-gray-500 text-center text-sm">
+          {market.resolved ? "Market Resolved" : "Market Expired"}
+        </div>
+      ) : !showBetting ? (
         <button
           onClick={() => setShowBetting(true)}
           className="w-full py-2.5 rounded-lg bg-gradient-to-r from-seek-purple to-seek-teal text-white font-medium text-sm hover:opacity-90 transition active:scale-[0.98]"

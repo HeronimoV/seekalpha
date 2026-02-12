@@ -1,8 +1,19 @@
 "use client";
 
-import { FC, useEffect, useState } from "react";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useEffect, useState } from "react";
+import { useWallet, useConnection } from "@solana/wallet-adapter-react";
+import { PublicKey } from "@solana/web3.js";
+import { AnchorProvider } from "@coral-xyz/anchor";
 import dynamic from "next/dynamic";
+import {
+  fetchAllMarkets,
+  fetchUserPrediction,
+  fetchConfig,
+  buildClaimWinningsTx,
+  getMarketPda,
+  OnChainMarket,
+} from "@/lib/program";
+import { inferCategory } from "@/lib/constants";
 
 const WalletMultiButton = dynamic(
   () =>
@@ -12,37 +23,85 @@ const WalletMultiButton = dynamic(
   { ssr: false }
 );
 
-interface UserPrediction {
-  marketTitle: string;
-  position: "YES" | "NO";
+interface UserPred {
+  market: OnChainMarket;
+  position: boolean;
   amount: number;
-  status: "active" | "won" | "lost";
-  potentialWin: number;
+  claimed: boolean;
   category: string;
 }
 
-// Demo data — will be replaced with on-chain reads
-const DEMO_PREDICTIONS: UserPrediction[] = [
-  {
-    marketTitle: "Will SOL hit $200 by end of February?",
-    position: "YES",
-    amount: 0.5,
-    status: "active",
-    potentialWin: 0.8,
-    category: "Crypto",
-  },
-  {
-    marketTitle: "Will Bitcoin reach $120K before April?",
-    position: "NO",
-    amount: 1.0,
-    status: "active",
-    potentialWin: 2.57,
-    category: "Crypto",
-  },
-];
-
 export default function PortfolioPage() {
-  const { connected, publicKey } = useWallet();
+  const { connected, publicKey, signTransaction, signAllTransactions } = useWallet();
+  const { connection } = useConnection();
+  const [predictions, setPredictions] = useState<UserPred[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [claimingId, setClaimingId] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!connected || !publicKey) return;
+
+    setLoading(true);
+    (async () => {
+      try {
+        const markets = await fetchAllMarkets();
+        const preds: UserPred[] = [];
+
+        for (const market of markets) {
+          const marketPda = getMarketPda(market.id);
+          const pred = await fetchUserPrediction(marketPda, publicKey);
+          if (pred) {
+            preds.push({
+              market,
+              position: pred.position,
+              amount: pred.amount,
+              claimed: pred.claimed,
+              category: inferCategory(market.title),
+            });
+          }
+        }
+
+        setPredictions(preds);
+      } catch (err) {
+        console.error("Failed to load predictions:", err);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [connected, publicKey]);
+
+  const handleClaim = async (pred: UserPred) => {
+    if (!publicKey || !signTransaction || !signAllTransactions) return;
+
+    try {
+      setClaimingId(pred.market.id);
+      const config = await fetchConfig();
+      const wallet = { publicKey, signTransaction, signAllTransactions };
+      const provider = new AnchorProvider(connection, wallet as any, { commitment: "confirmed" });
+
+      const tx = await buildClaimWinningsTx(
+        provider,
+        pred.market.id,
+        new PublicKey(config.treasury)
+      );
+
+      const { blockhash } = await connection.getLatestBlockhash();
+      tx.recentBlockhash = blockhash;
+      tx.feePayer = publicKey;
+
+      const signedTx = await signTransaction(tx);
+      const sig = await connection.sendRawTransaction(signedTx.serialize());
+      await connection.confirmTransaction(sig, "confirmed");
+
+      // Refresh
+      window.location.reload();
+    } catch (err: any) {
+      console.error("Claim failed:", err);
+      alert(err.message || "Claim failed");
+    } finally {
+      setClaimingId(null);
+    }
+  };
 
   if (!connected) {
     return (
@@ -57,9 +116,18 @@ export default function PortfolioPage() {
     );
   }
 
-  const activePredictions = DEMO_PREDICTIONS.filter((p) => p.status === "active");
-  const totalStaked = DEMO_PREDICTIONS.reduce((sum, p) => sum + p.amount, 0);
-  const totalPotential = DEMO_PREDICTIONS.reduce((sum, p) => sum + p.potentialWin, 0);
+  const activePredictions = predictions.filter((p) => !p.market.resolved);
+  const totalStaked = predictions.reduce((sum, p) => sum + p.amount, 0);
+  const wonPredictions = predictions.filter(
+    (p) => p.market.resolved && p.market.outcome === p.position
+  );
+  const lostPredictions = predictions.filter(
+    (p) => p.market.resolved && p.market.outcome !== p.position
+  );
+  const winRate =
+    wonPredictions.length + lostPredictions.length > 0
+      ? (wonPredictions.length / (wonPredictions.length + lostPredictions.length)) * 100
+      : 0;
 
   return (
     <div className="py-12">
@@ -69,9 +137,9 @@ export default function PortfolioPage() {
       </p>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
         <div className="bg-seek-card border border-seek-border rounded-xl p-4">
-          <div className="text-sm text-gray-400 mb-1">Active Predictions</div>
+          <div className="text-sm text-gray-400 mb-1">Active</div>
           <div className="text-2xl font-bold text-white">{activePredictions.length}</div>
         </div>
         <div className="bg-seek-card border border-seek-border rounded-xl p-4">
@@ -79,69 +147,88 @@ export default function PortfolioPage() {
           <div className="text-2xl font-bold text-seek-teal">{totalStaked.toFixed(2)} SOL</div>
         </div>
         <div className="bg-seek-card border border-seek-border rounded-xl p-4">
-          <div className="text-sm text-gray-400 mb-1">Potential Winnings</div>
-          <div className="text-2xl font-bold text-green-400">{totalPotential.toFixed(2)} SOL</div>
+          <div className="text-sm text-gray-400 mb-1">Won</div>
+          <div className="text-2xl font-bold text-green-400">{wonPredictions.length}</div>
         </div>
         <div className="bg-seek-card border border-seek-border rounded-xl p-4">
           <div className="text-sm text-gray-400 mb-1">Win Rate</div>
-          <div className="text-2xl font-bold text-seek-purple">—</div>
+          <div className="text-2xl font-bold text-seek-purple">
+            {predictions.length > 0 ? `${winRate.toFixed(0)}%` : "—"}
+          </div>
         </div>
       </div>
 
-      {/* Predictions List */}
-      <h2 className="text-xl font-semibold mb-4">Your Predictions</h2>
-      <div className="space-y-4">
-        {DEMO_PREDICTIONS.map((pred, i) => (
-          <div
-            key={i}
-            className="bg-seek-card border border-seek-border rounded-xl p-5 flex items-center justify-between"
-          >
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs px-2 py-0.5 rounded-full bg-seek-teal/20 text-seek-teal">
-                  {pred.category}
-                </span>
-                <span
-                  className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                    pred.status === "active"
-                      ? "bg-yellow-500/20 text-yellow-400"
-                      : pred.status === "won"
-                      ? "bg-green-500/20 text-green-400"
-                      : "bg-red-500/20 text-red-400"
-                  }`}
-                >
-                  {pred.status.toUpperCase()}
-                </span>
-              </div>
-              <h3 className="font-medium mb-1">{pred.marketTitle}</h3>
-              <div className="text-sm text-gray-400">
-                You predicted{" "}
-                <span
-                  className={
-                    pred.position === "YES" ? "text-seek-teal font-medium" : "text-red-400 font-medium"
-                  }
-                >
-                  {pred.position}
-                </span>{" "}
-                with {pred.amount} SOL
-              </div>
-            </div>
-            <div className="text-right ml-4">
-              <div className="text-sm text-gray-400">Potential Win</div>
-              <div className="text-lg font-bold text-green-400">
-                +{pred.potentialWin.toFixed(2)} SOL
-              </div>
-              {pred.status === "won" && (
-                <button className="mt-2 px-4 py-1.5 rounded-lg bg-green-500 text-white text-sm font-medium hover:bg-green-600 transition">
-                  Claim
-                </button>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
+      {/* Loading */}
+      {loading && (
+        <div className="text-center py-16">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-seek-purple mb-4"></div>
+          <p className="text-gray-400">Loading your predictions from Solana...</p>
+        </div>
+      )}
 
-      {DEMO_PREDICTIONS.length === 0 && (
+      {/* Predictions List */}
+      {!loading && predictions.length > 0 && (
+        <>
+          <h2 className="text-xl font-semibold mb-4">Your Predictions</h2>
+          <div className="space-y-4">
+            {predictions.map((pred) => {
+              const isWin = pred.market.resolved && pred.market.outcome === pred.position;
+              const isLoss = pred.market.resolved && pred.market.outcome !== pred.position;
+              const canClaim = isWin && !pred.claimed;
+
+              return (
+                <div
+                  key={pred.market.id}
+                  className="bg-seek-card border border-seek-border rounded-xl p-5 flex items-center justify-between"
+                >
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-seek-teal/20 text-seek-teal">
+                        {pred.category}
+                      </span>
+                      <span
+                        className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                          !pred.market.resolved
+                            ? "bg-yellow-500/20 text-yellow-400"
+                            : isWin
+                            ? "bg-green-500/20 text-green-400"
+                            : "bg-red-500/20 text-red-400"
+                        }`}
+                      >
+                        {!pred.market.resolved ? "ACTIVE" : isWin ? "WON" : "LOST"}
+                      </span>
+                    </div>
+                    <h3 className="font-medium mb-1">{pred.market.title}</h3>
+                    <div className="text-sm text-gray-400">
+                      You predicted{" "}
+                      <span className={pred.position ? "text-seek-teal font-medium" : "text-red-400 font-medium"}>
+                        {pred.position ? "YES" : "NO"}
+                      </span>{" "}
+                      with {pred.amount.toFixed(2)} SOL
+                    </div>
+                  </div>
+                  <div className="text-right ml-4">
+                    {canClaim && (
+                      <button
+                        onClick={() => handleClaim(pred)}
+                        disabled={claimingId === pred.market.id}
+                        className="px-4 py-1.5 rounded-lg bg-green-500 text-white text-sm font-medium hover:bg-green-600 transition disabled:opacity-50"
+                      >
+                        {claimingId === pred.market.id ? "Claiming..." : "💰 Claim"}
+                      </button>
+                    )}
+                    {pred.claimed && (
+                      <span className="text-xs text-gray-500">Claimed ✓</span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
+
+      {!loading && predictions.length === 0 && (
         <div className="text-center py-16 text-gray-500">
           <p className="text-4xl mb-4">🔮</p>
           <p>No predictions yet. Go make some calls!</p>
