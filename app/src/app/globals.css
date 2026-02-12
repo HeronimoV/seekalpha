@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --seek-purple: #7C3AED;
+  --seek-teal: #14B8A6;
+}
+
+body {
+  background: #0F0B1A;
+  color: #E2E8F0;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.gradient-border {
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  position: relative;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, var(--seek-purple), var(--seek-teal));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.btn-yes {
+  background: linear-gradient(135deg, #14B8A6, #0D9488);
+}
+.btn-yes:hover {
+  background: linear-gradient(135deg, #0D9488, #0F766E);
+}
+
+.btn-no {
+  background: linear-gradient(135deg, #EF4444, #DC2626);
+}
+.btn-no:hover {
+  background: linear-gradient(135deg, #DC2626, #B91C1C);
+}
