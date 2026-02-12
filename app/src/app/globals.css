@@ -11,6 +11,13 @@ body {
   background: #0F0B1A;
   color: #E2E8F0;
   font-family: system-ui, -apple-system, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Smooth scrolling on mobile */
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
 }
 
 .gradient-border {
@@ -38,10 +45,55 @@ body {
 .btn-yes:hover {
   background: linear-gradient(135deg, #0D9488, #0F766E);
 }
+.btn-yes:active {
+  transform: scale(0.97);
+}
 
 .btn-no {
   background: linear-gradient(135deg, #EF4444, #DC2626);
 }
 .btn-no:hover {
   background: linear-gradient(135deg, #DC2626, #B91C1C);
+}
+.btn-no:active {
+  transform: scale(0.97);
+}
+
+/* Mobile-first touch targets */
+@media (max-width: 768px) {
+  button, a, select, input {
+    min-height: 44px;
+  }
+}
+
+/* Hide scrollbar on category filter */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Wallet adapter overrides for mobile */
+.wallet-adapter-button {
+  font-size: 14px !important;
+}
+
+@media (max-width: 640px) {
+  .wallet-adapter-button {
+    font-size: 12px !important;
+    padding: 0 12px !important;
+    height: 36px !important;
+  }
+}
+
+/* Pulse animation for live indicator */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
 }

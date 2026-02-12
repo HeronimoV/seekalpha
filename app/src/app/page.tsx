@@ -5,7 +5,7 @@ import { MarketCard } from "@/components/MarketCard";
 import { DEMO_MARKETS } from "@/lib/constants";
 import { useState } from "react";
 
-const CATEGORIES = ["All", "Crypto", "Tech", "DeFi", "Sports", "Politics"];
+const CATEGORIES = ["All", "Crypto", "Tech", "DeFi", "Sports", "Politics", "Memes", "Culture"];
 
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState("All");
@@ -20,7 +20,7 @@ export default function Home() {
       <Hero />
 
       {/* Category Filter */}
-      <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
+      <div className="flex gap-2 mb-8 overflow-x-auto pb-2 hide-scrollbar">
         {CATEGORIES.map((cat) => (
           <button
             key={cat}
