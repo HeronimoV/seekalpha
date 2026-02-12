@@ -1,4 +1,4 @@
-export const PROGRAM_ID_STR = "11111111111111111111111111111111"; // Placeholder until deployed
+export const PROGRAM_ID_STR = "FEiFToWsHmCgjevuw9k8DNS8N8BdVdwTKostmvN9LS8B"; // Placeholder until deployed
 export const RPC_ENDPOINT = "https://api.devnet.solana.com";
 export const PLATFORM_FEE_BPS = 300; // 3%
 

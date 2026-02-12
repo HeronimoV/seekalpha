@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-declare_id!("SeekA1pha111111111111111111111111111111111");
+declare_id!("FEiFToWsHmCgjevuw9k8DNS8N8BdVdwTKostmvN9LS8B");
 
 pub const PLATFORM_FEE_BPS: u16 = 300; // 3%
 
