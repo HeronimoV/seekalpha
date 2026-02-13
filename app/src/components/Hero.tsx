@@ -1,7 +1,8 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { fetchConfig } from "@/lib/program";
 import dynamic from "next/dynamic";
 
 const WalletMultiButton = dynamic(
@@ -14,6 +15,13 @@ const WalletMultiButton = dynamic(
 
 export const Hero: FC = () => {
   const { connected } = useWallet();
+  const [marketCount, setMarketCount] = useState<number>(0);
+
+  useEffect(() => {
+    fetchConfig()
+      .then((c) => setMarketCount(c.marketCount))
+      .catch(() => {});
+  }, []);
 
   return (
     <div className="text-center py-10 md:py-16 px-4">
@@ -38,22 +46,22 @@ export const Hero: FC = () => {
         <div className="flex items-center gap-2">
           <span className="text-2xl">📊</span>
           <div className="text-left">
-            <div className="text-white font-medium">10 Active Markets</div>
+            <div className="text-white font-medium">{marketCount} Active Markets</div>
             <div>Predict outcomes</div>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-2xl">💰</span>
+          <span className="text-2xl">🌍</span>
           <div className="text-left">
-            <div className="text-white font-medium">1,505 SOL</div>
-            <div>Total volume</div>
+            <div className="text-white font-medium">No KYC</div>
+            <div>No geo-restrictions</div>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-2xl">⚡</span>
           <div className="text-left">
             <div className="text-white font-medium">3% Fee</div>
-            <div>Lowest on Solana</div>
+            <div>Lowest in prediction markets</div>
           </div>
         </div>
       </div>

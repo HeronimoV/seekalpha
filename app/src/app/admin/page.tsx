@@ -1,8 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useState, useEffect } from "react";
+import { useWallet, useConnection } from "@solana/wallet-adapter-react";
+import { AnchorProvider, BN } from "@coral-xyz/anchor";
+import { PublicKey } from "@solana/web3.js";
 import dynamic from "next/dynamic";
+import {
+  fetchAllMarkets,
+  fetchConfig,
+  getConfigPda,
+  getMarketPda,
+  getVaultPda,
+  getProgram,
+  OnChainMarket,
+} from "@/lib/program";
+import { inferCategory } from "@/lib/constants";
 
 const WalletMultiButton = dynamic(
   () =>
@@ -12,47 +24,31 @@ const WalletMultiButton = dynamic(
   { ssr: false }
 );
 
-// Admin wallet — only this address can create/resolve markets
-const ADMIN_WALLET = ""; // Will be set to your wallet pubkey
-
-const CATEGORIES = ["Crypto", "Tech", "DeFi", "Sports", "Politics", "Memes", "Culture"];
-
-interface MarketForm {
-  title: string;
-  description: string;
-  category: string;
-  resolutionDate: string;
-  resolutionTime: string;
-}
-
-interface ActiveMarket {
-  id: number;
-  title: string;
-  category: string;
-  yesPool: number;
-  noPool: number;
-  resolutionTime: string;
-  resolved: boolean;
-}
-
-const DEMO_ACTIVE_MARKETS: ActiveMarket[] = [
-  { id: 0, title: "Will SOL hit $200 by end of February?", category: "Crypto", yesPool: 145.5, noPool: 87.2, resolutionTime: "2026-02-28", resolved: false },
-  { id: 1, title: "Will Bitcoin reach $120K before April?", category: "Crypto", yesPool: 312.0, noPool: 198.5, resolutionTime: "2026-04-01", resolved: false },
-  { id: 2, title: "Will the Seeker phone ship before Q2 2026?", category: "Tech", yesPool: 56.8, noPool: 23.1, resolutionTime: "2026-07-01", resolved: false },
-  { id: 3, title: "Will ETH flip SOL in daily DEX volume this month?", category: "DeFi", yesPool: 34.2, noPool: 89.7, resolutionTime: "2026-02-28", resolved: false },
-];
+const ADMIN_WALLET = "8xuoEcEMPM6iiB236HUGbEjj4sSiCkKyFR5xdVpn37gt";
 
 export default function AdminPage() {
-  const { connected, publicKey } = useWallet();
-  const [form, setForm] = useState<MarketForm>({
+  const { connected, publicKey, signTransaction, signAllTransactions } = useWallet();
+  const { connection } = useConnection();
+  const [markets, setMarkets] = useState<OnChainMarket[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [form, setForm] = useState({
     title: "",
     description: "",
-    category: "Crypto",
     resolutionDate: "",
     resolutionTime: "23:59",
   });
   const [creating, setCreating] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
+  const [resolvingId, setResolvingId] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetchAllMarkets()
+      .then((m) => {
+        setMarkets(m);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
 
   if (!connected) {
     return (
@@ -65,30 +61,123 @@ export default function AdminPage() {
     );
   }
 
+  const isAdmin = publicKey?.toString() === ADMIN_WALLET;
+
+  if (!isAdmin) {
+    return (
+      <div className="text-center py-24">
+        <div className="text-6xl mb-6">🚫</div>
+        <h2 className="text-2xl font-bold mb-4">Not Authorized</h2>
+        <p className="text-gray-400 mb-4">This wallet is not the admin.</p>
+        <p className="text-xs text-gray-600 font-mono">{publicKey?.toString()}</p>
+      </div>
+    );
+  }
+
+  const getProvider = () => {
+    const wallet = { publicKey: publicKey!, signTransaction: signTransaction!, signAllTransactions: signAllTransactions! };
+    return new AnchorProvider(connection, wallet as any, { commitment: "confirmed" });
+  };
+
   const handleCreate = async () => {
     if (!form.title || !form.description || !form.resolutionDate) {
       setStatus("⚠️ Fill in all fields");
       return;
     }
-    setCreating(true);
-    setStatus("🔄 Creating market...");
 
-    // Simulate for now — will wire to actual program instruction
-    setTimeout(() => {
-      setStatus("✅ Market created successfully!");
-      setForm({ title: "", description: "", category: "Crypto", resolutionDate: "", resolutionTime: "23:59" });
+    try {
+      setCreating(true);
+      setStatus("🔄 Creating market on-chain...");
+
+      const provider = getProvider();
+      const program = getProgram(provider);
+      const configPda = getConfigPda();
+
+      const config = await fetchConfig();
+      const marketId = config.marketCount;
+
+      const marketPda = getMarketPda(marketId);
+      const vaultPda = getVaultPda(marketId);
+
+      const resolutionTimestamp = Math.floor(
+        new Date(`${form.resolutionDate}T${form.resolutionTime}:00Z`).getTime() / 1000
+      );
+
+      const tx = await (program.methods as any)
+        .createMarket(form.title, form.description, new BN(resolutionTimestamp))
+        .accounts({
+          config: configPda,
+          market: marketPda,
+          vault: vaultPda,
+          creator: publicKey,
+          admin: publicKey,
+        })
+        .transaction();
+
+      const { blockhash } = await connection.getLatestBlockhash();
+      tx.recentBlockhash = blockhash;
+      tx.feePayer = publicKey;
+
+      const signedTx = await signTransaction!(tx);
+      const sig = await connection.sendRawTransaction(signedTx.serialize());
+      await connection.confirmTransaction(sig, "confirmed");
+
+      setStatus(`✅ Market #${marketId} created! TX: ${sig.slice(0, 20)}...`);
+      setForm({ title: "", description: "", resolutionDate: "", resolutionTime: "23:59" });
+
+      // Refresh markets
+      const updated = await fetchAllMarkets();
+      setMarkets(updated);
+    } catch (err: any) {
+      console.error("Create failed:", err);
+      setStatus(`❌ Failed: ${err.message?.slice(0, 100)}`);
+    } finally {
       setCreating(false);
-      setTimeout(() => setStatus(null), 3000);
-    }, 1500);
+    }
   };
 
   const handleResolve = async (marketId: number, outcome: boolean) => {
-    setStatus(`🔄 Resolving market #${marketId} as ${outcome ? "YES" : "NO"}...`);
-    setTimeout(() => {
-      setStatus(`✅ Market #${marketId} resolved as ${outcome ? "YES" : "NO"}`);
-      setTimeout(() => setStatus(null), 3000);
-    }, 1500);
+    try {
+      setResolvingId(marketId);
+      setStatus(`🔄 Resolving market #${marketId} as ${outcome ? "YES" : "NO"}...`);
+
+      const provider = getProvider();
+      const program = getProgram(provider);
+      const configPda = getConfigPda();
+      const marketPda = getMarketPda(marketId);
+
+      const tx = await (program.methods as any)
+        .resolveMarket(outcome)
+        .accounts({
+          config: configPda,
+          market: marketPda,
+          admin: publicKey,
+        })
+        .transaction();
+
+      const { blockhash } = await connection.getLatestBlockhash();
+      tx.recentBlockhash = blockhash;
+      tx.feePayer = publicKey;
+
+      const signedTx = await signTransaction!(tx);
+      const sig = await connection.sendRawTransaction(signedTx.serialize());
+      await connection.confirmTransaction(sig, "confirmed");
+
+      setStatus(`✅ Market #${marketId} resolved as ${outcome ? "YES ✅" : "NO ❌"}`);
+
+      // Refresh
+      const updated = await fetchAllMarkets();
+      setMarkets(updated);
+    } catch (err: any) {
+      console.error("Resolve failed:", err);
+      setStatus(`❌ Resolve failed: ${err.message?.slice(0, 100)}`);
+    } finally {
+      setResolvingId(null);
+    }
   };
+
+  const activeMarkets = markets.filter((m) => !m.resolved);
+  const resolvedMarkets = markets.filter((m) => m.resolved);
 
   return (
     <div className="py-12 max-w-4xl mx-auto">
@@ -96,16 +185,16 @@ export default function AdminPage() {
         <div>
           <h1 className="text-3xl font-bold">⚙️ Admin Panel</h1>
           <p className="text-gray-400 text-sm mt-1">
-            {publicKey?.toString().slice(0, 8)}...{publicKey?.toString().slice(-8)}
+            {publicKey?.toString().slice(0, 8)}...{publicKey?.toString().slice(-8)} · {markets.length} markets
           </p>
         </div>
         <span className="px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-sm font-medium">
-          Admin Connected
+          ⛓️ Admin Connected
         </span>
       </div>
 
       {status && (
-        <div className="mb-6 p-4 rounded-xl bg-seek-card border border-seek-border text-center">
+        <div className="mb-6 p-4 rounded-xl bg-seek-card border border-seek-border text-center text-sm">
           {status}
         </div>
       )}
@@ -139,19 +228,7 @@ export default function AdminPage() {
             <div className="text-xs text-gray-600 mt-1">{form.description.length}/512</div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="text-sm text-gray-400 mb-1 block">Category</label>
-              <select
-                value={form.category}
-                onChange={(e) => setForm({ ...form, category: e.target.value })}
-                className="w-full bg-seek-dark border border-seek-border rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-seek-purple"
-              >
-                {CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-sm text-gray-400 mb-1 block">Resolution Date</label>
               <input
@@ -177,52 +254,93 @@ export default function AdminPage() {
             disabled={creating}
             className="w-full py-3 rounded-lg bg-gradient-to-r from-seek-purple to-seek-teal text-white font-medium hover:opacity-90 transition disabled:opacity-50"
           >
-            {creating ? "Creating..." : "🚀 Create Market"}
+            {creating ? "Creating on-chain..." : "🚀 Create Market On-Chain"}
           </button>
         </div>
       </div>
 
-      {/* Active Markets - Resolve */}
-      <div className="bg-seek-card border border-seek-border rounded-xl p-6">
-        <h2 className="text-xl font-semibold mb-6">📊 Active Markets — Resolve</h2>
-        <div className="space-y-4">
-          {DEMO_ACTIVE_MARKETS.map((market) => (
-            <div
-              key={market.id}
-              className="border border-seek-border rounded-lg p-4 flex items-center justify-between"
-            >
-              <div className="flex-1">
+      {/* Active Markets */}
+      <div className="bg-seek-card border border-seek-border rounded-xl p-6 mb-8">
+        <h2 className="text-xl font-semibold mb-6">📊 Active Markets ({activeMarkets.length})</h2>
+        {loading ? (
+          <div className="text-center py-8 text-gray-400">Loading from Solana...</div>
+        ) : (
+          <div className="space-y-4">
+            {activeMarkets.map((market) => {
+              const totalPool = market.yesPool + market.noPool;
+              const isExpired = market.resolutionTime.getTime() < Date.now();
+
+              return (
+                <div
+                  key={market.id}
+                  className="border border-seek-border rounded-lg p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3"
+                >
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-seek-teal/20 text-seek-teal">
+                        {inferCategory(market.title)}
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        #{market.id} · Resolves: {market.resolutionTime.toLocaleDateString()}
+                      </span>
+                      {isExpired && (
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-400">
+                          EXPIRED — Ready to resolve
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="font-medium text-sm">{market.title}</h3>
+                    <div className="text-xs text-gray-400 mt-1">
+                      Pool: {totalPool.toFixed(2)} SOL (YES: {market.yesPool.toFixed(2)} / NO: {market.noPool.toFixed(2)})
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleResolve(market.id, true)}
+                      disabled={resolvingId === market.id}
+                      className="px-4 py-2 rounded-lg btn-yes text-white text-sm font-medium disabled:opacity-50"
+                    >
+                      {resolvingId === market.id ? "..." : "✅ YES"}
+                    </button>
+                    <button
+                      onClick={() => handleResolve(market.id, false)}
+                      disabled={resolvingId === market.id}
+                      className="px-4 py-2 rounded-lg btn-no text-white text-sm font-medium disabled:opacity-50"
+                    >
+                      {resolvingId === market.id ? "..." : "❌ NO"}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Resolved Markets */}
+      {resolvedMarkets.length > 0 && (
+        <div className="bg-seek-card border border-seek-border rounded-xl p-6">
+          <h2 className="text-xl font-semibold mb-6">🏁 Resolved Markets ({resolvedMarkets.length})</h2>
+          <div className="space-y-3">
+            {resolvedMarkets.map((market) => (
+              <div
+                key={market.id}
+                className="border border-seek-border rounded-lg p-4 opacity-60"
+              >
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-seek-teal/20 text-seek-teal">
-                    {market.category}
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${
+                    market.outcome ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400"
+                  }`}>
+                    {market.outcome ? "YES ✅" : "NO ❌"}
                   </span>
-                  <span className="text-xs text-gray-500">
-                    Resolves: {market.resolutionTime}
-                  </span>
+                  <span className="text-xs text-gray-500">#{market.id}</span>
                 </div>
                 <h3 className="font-medium text-sm">{market.title}</h3>
-                <div className="text-xs text-gray-400 mt-1">
-                  Pool: {(market.yesPool + market.noPool).toFixed(1)} SOL (YES: {market.yesPool} / NO: {market.noPool})
-                </div>
               </div>
-              <div className="flex gap-2 ml-4">
-                <button
-                  onClick={() => handleResolve(market.id, true)}
-                  className="px-4 py-2 rounded-lg btn-yes text-white text-sm font-medium"
-                >
-                  ✅ YES
-                </button>
-                <button
-                  onClick={() => handleResolve(market.id, false)}
-                  className="px-4 py-2 rounded-lg btn-no text-white text-sm font-medium"
-                >
-                  ❌ NO
-                </button>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
