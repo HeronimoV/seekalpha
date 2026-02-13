@@ -55,6 +55,7 @@ pub mod seekalpha {
     }
 
     /// Place a prediction (bet) on a market
+    /// If user already has a position, adds to it (must be same side)
     pub fn place_prediction(
         ctx: Context<PlacePrediction>,
         amount: u64,
@@ -93,14 +94,25 @@ pub mod seekalpha {
             market.no_pool = market.no_pool.checked_add(amount).unwrap();
         }
 
-        // Record user's position
+        // Record or update user's position
         let prediction = &mut ctx.accounts.prediction;
-        prediction.user = ctx.accounts.user.key();
-        prediction.market = market.key();
-        prediction.amount = amount;
-        prediction.position = position;
-        prediction.claimed = false;
-        prediction.bump = ctx.bumps.prediction;
+
+        if prediction.amount > 0 {
+            // Existing position — must bet on same side
+            require!(
+                prediction.position == position,
+                SeekAlphaError::PositionMismatch
+            );
+            prediction.amount = prediction.amount.checked_add(amount).unwrap();
+        } else {
+            // New position
+            prediction.user = ctx.accounts.user.key();
+            prediction.market = market.key();
+            prediction.amount = amount;
+            prediction.position = position;
+            prediction.claimed = false;
+            prediction.bump = ctx.bumps.prediction;
+        }
 
         Ok(())
     }
@@ -234,7 +246,7 @@ pub struct PlacePrediction<'info> {
     #[account(mut)]
     pub market: Account<'info, Market>,
     #[account(
-        init,
+        init_if_needed,
         payer = user,
         space = 8 + Prediction::INIT_SPACE,
         seeds = [b"prediction", market.key().as_ref(), user.key().as_ref()],
@@ -362,4 +374,6 @@ pub enum SeekAlphaError {
     AlreadyClaimed,
     #[msg("You lost this prediction")]
     LostPrediction,
+    #[msg("Cannot change sides — you already bet the other way")]
+    PositionMismatch,
 }

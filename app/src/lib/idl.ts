@@ -90,7 +90,8 @@ export const IDL = {
     {"code": 6006,"name": "MarketNotResolved","msg": "Market not resolved yet"},
     {"code": 6007,"name": "ZeroAmount","msg": "Amount must be greater than 0"},
     {"code": 6008,"name": "AlreadyClaimed","msg": "Winnings already claimed"},
-    {"code": 6009,"name": "LostPrediction","msg": "You lost this prediction"}
+    {"code": 6009,"name": "LostPrediction","msg": "You lost this prediction"},
+    {"code": 6010,"name": "PositionMismatch","msg": "Cannot change sides — you already bet the other way"}
   ],
   "types": [
     {"name": "Market","type": {"kind": "struct","fields": [

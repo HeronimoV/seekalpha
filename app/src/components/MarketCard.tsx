@@ -126,6 +126,8 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
           setTxStatus("❌ Transaction cancelled");
         } else if (err.message?.includes("already in use")) {
           setTxStatus("⚠️ You already have a prediction on this market!");
+        } else if (err.message?.includes("PositionMismatch")) {
+          setTxStatus("⚠️ Can't switch sides! You already bet the other way.");
         } else {
           setTxStatus("❌ Transaction failed — try again");
         }
