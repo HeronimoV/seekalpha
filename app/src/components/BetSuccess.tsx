@@ -129,8 +129,8 @@ export const BetSuccess: FC<BetSuccessProps> = ({
           <a
             href={`https://x.com/intent/tweet?text=${encodeURIComponent(
               isWin
-                ? `🏆 Just won ${potentialPayout.toFixed(3)} SOL on SeekAlpha!\n\n"${marketTitle}"\n\nI predicted ${position ? "YES" : "NO"} and was RIGHT 💰\n\nPredict & earn on Solana 👇\nhttps://seekalpha.bet\n\n@Seek_Alpha_`
-                : `🔮 Just placed a prediction on SeekAlpha!\n\n"${marketTitle}"\n\nI'm betting ${position ? "YES 🟢" : "NO 🔴"} with ${amount.toFixed(3)} SOL\n\nThink you know better? 👇\nhttps://seekalpha.bet\n\n@Seek_Alpha_`
+                ? `🏆 Just won ${potentialPayout.toFixed(3)} SOL on SeekAlpha!\n\n"${marketTitle}"\n\nI predicted ${position ? "YES" : "NO"} and was RIGHT 💰\n\nPredict & earn on Solana 👇\nhttps://seekalpha.bet\n\n@Seek_Alpha_ #SeekAlpha`
+                : `🔮 Just placed a prediction on SeekAlpha!\n\n"${marketTitle}"\n\nI'm betting ${position ? "YES 🟢" : "NO 🔴"} with ${amount.toFixed(3)} SOL\n\nThink you know better? 👇\nhttps://seekalpha.bet\n\n@Seek_Alpha_ #SeekAlpha`
             )}`}
             target="_blank"
             rel="noopener noreferrer"
