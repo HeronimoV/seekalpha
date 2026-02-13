@@ -179,7 +179,7 @@ export default function AboutPage() {
               💻 GitHub
             </a>
             <a
-              href="https://discord.gg/seekalpha"
+              href="https://discord.gg/ZAYhF4hSZv"
               target="_blank"
               rel="noopener noreferrer"
               className="px-6 py-3 rounded-xl bg-seek-card border border-seek-border hover:border-indigo-400 transition text-sm font-medium"
