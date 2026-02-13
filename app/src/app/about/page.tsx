@@ -178,6 +178,22 @@ export default function AboutPage() {
             >
               💻 GitHub
             </a>
+            <a
+              href="https://discord.gg/seekalpha"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3 rounded-xl bg-seek-card border border-seek-border hover:border-indigo-400 transition text-sm font-medium"
+            >
+              💬 Discord
+            </a>
+            <a
+              href="https://t.me/+PQI6FKeLWm5iYmIx"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3 rounded-xl bg-seek-card border border-seek-border hover:border-blue-400 transition text-sm font-medium"
+            >
+              ✈️ Telegram
+            </a>
           </div>
         </section>
       </div>

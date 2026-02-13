@@ -58,6 +58,8 @@ export default function RootLayout({
                   <h4 className="font-semibold text-sm mb-3">Community</h4>
                   <div className="space-y-2 text-sm text-gray-500">
                     <a href="https://twitter.com/Seek_Alpha_" target="_blank" className="block hover:text-white transition">Twitter / X</a>
+                    <a href="https://discord.gg/seekalpha" target="_blank" className="block hover:text-white transition">Discord</a>
+                    <a href="https://t.me/+PQI6FKeLWm5iYmIx" target="_blank" className="block hover:text-white transition">Telegram</a>
                   </div>
                 </div>
                 <div>
