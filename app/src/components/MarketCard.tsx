@@ -160,8 +160,10 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
       </div>
 
       {/* Title */}
-      <h3 className="text-base md:text-lg font-semibold mb-2 leading-tight">{market.title}</h3>
-      <p className="text-sm text-gray-400 mb-4">{market.description}</p>
+      <a href={`/market/${market.id}`} className="block hover:text-seek-teal transition">
+        <h3 className="text-base md:text-lg font-semibold mb-2 leading-tight">{market.title}</h3>
+      </a>
+      <p className="text-sm text-gray-400 mb-4 line-clamp-2">{market.description}</p>
 
       {/* Probability Bar */}
       <div className="mb-4">
