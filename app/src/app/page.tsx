@@ -189,6 +189,83 @@ export default function Home() {
         </div>
       )}
 
+      {/* How it Works */}
+      {!loading && !error && (
+        <div className="mb-16 mt-8">
+          <h2 className="text-2xl font-bold text-center mb-8">How It Works</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-seek-card border border-seek-border rounded-xl p-6 text-center">
+              <div className="text-3xl mb-3">👛</div>
+              <h3 className="font-semibold mb-2">1. Connect Wallet</h3>
+              <p className="text-sm text-gray-400">
+                Connect your Phantom wallet. No sign-up, no KYC, no email. Just your Solana wallet.
+              </p>
+            </div>
+            <div className="bg-seek-card border border-seek-border rounded-xl p-6 text-center">
+              <div className="text-3xl mb-3">🔮</div>
+              <h3 className="font-semibold mb-2">2. Place Your Prediction</h3>
+              <p className="text-sm text-gray-400">
+                Pick a market, choose YES or NO, and stake SOL. Your prediction is recorded on-chain.
+              </p>
+            </div>
+            <div className="bg-seek-card border border-seek-border rounded-xl p-6 text-center">
+              <div className="text-3xl mb-3">💰</div>
+              <h3 className="font-semibold mb-2">3. Win & Collect</h3>
+              <p className="text-sm text-gray-400">
+                If you predicted correctly, claim your share of the pool. Only 3% fee — lowest in the game.
+              </p>
+            </div>
+          </div>
+
+          {/* Stats bar */}
+          <div className="flex flex-wrap items-center justify-center gap-6 mt-8 text-sm">
+            <div className="flex items-center gap-2 text-gray-400">
+              <span className="text-seek-teal font-bold">SOL-native</span> — no bridging
+            </div>
+            <div className="flex items-center gap-2 text-gray-400">
+              <span className="text-seek-purple font-bold">3% fee</span> — lowest available
+            </div>
+            <div className="flex items-center gap-2 text-gray-400">
+              <span className="text-green-400 font-bold">Open source</span> — fully transparent
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Community CTA */}
+      {!loading && !error && (
+        <div className="bg-gradient-to-r from-seek-purple/10 to-seek-teal/10 border border-seek-border rounded-xl p-8 text-center mb-12">
+          <h2 className="text-xl font-bold mb-2">Join the Community</h2>
+          <p className="text-gray-400 text-sm mb-4">Get market alerts, suggest new markets, and flex your predictions.</p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <a
+              href="https://discord.gg/ZAYhF4hSZv"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-5 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-500 transition"
+            >
+              💬 Discord
+            </a>
+            <a
+              href="https://t.me/+PQI6FKeLWm5iYmIx"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-5 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-500 transition"
+            >
+              ✈️ Telegram
+            </a>
+            <a
+              href="https://twitter.com/Seek_Alpha_"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-5 py-2 rounded-lg bg-gray-800 text-white text-sm font-medium hover:bg-gray-700 transition"
+            >
+              𝕏 Twitter
+            </a>
+          </div>
+        </div>
+      )}
+
       {/* On-chain badge */}
       {!loading && !error && markets.length > 0 && (
         <div className="text-center mb-8">
