@@ -138,6 +138,20 @@ pub mod seekalpha {
         Ok(())
     }
 
+    /// Transfer admin to a new wallet
+    pub fn update_admin(ctx: Context<UpdateAdmin>, new_admin: Pubkey) -> Result<()> {
+        let config = &mut ctx.accounts.config;
+        config.admin = new_admin;
+        Ok(())
+    }
+
+    /// Update treasury wallet
+    pub fn update_treasury(ctx: Context<UpdateAdmin>, new_treasury: Pubkey) -> Result<()> {
+        let config = &mut ctx.accounts.config;
+        config.treasury = new_treasury;
+        Ok(())
+    }
+
     /// Claim winnings from a resolved market
     pub fn claim_winnings(ctx: Context<ClaimWinnings>) -> Result<()> {
         let market = &ctx.accounts.market;
@@ -263,6 +277,18 @@ pub struct PlacePrediction<'info> {
     #[account(mut)]
     pub user: Signer<'info>,
     pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct UpdateAdmin<'info> {
+    #[account(
+        mut,
+        seeds = [b"config"],
+        bump,
+        has_one = admin,
+    )]
+    pub config: Account<'info, PlatformConfig>,
+    pub admin: Signer<'info>,
 }
 
 #[derive(Accounts)]

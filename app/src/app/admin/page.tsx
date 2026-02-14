@@ -24,7 +24,7 @@ const WalletMultiButton = dynamic(
   { ssr: false }
 );
 
-const ADMIN_WALLET = "8xuoEcEMPM6iiB236HUGbEjj4sSiCkKyFR5xdVpn37gt";
+const ADMIN_WALLET = "7XnGiEFMreRtdb9FtvX3q5G6B5dWM6fMQQPU5i17fp24";
 
 export default function AdminPage() {
   const { connected, publicKey, signTransaction, signAllTransactions } = useWallet();
