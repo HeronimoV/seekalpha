@@ -1,6 +1,6 @@
 // Auto-generated from target/idl/seekalpha.json
 export const IDL = {
-  "address": "FEiFToWsHmCgjevuw9k8DNS8N8BdVdwTKostmvN9LS8B",
+  "address": "9URCH6UhsMmgwX9xr2L84fimrGjpH8r3xheaSaZ21qGb",
   "metadata": {
     "name": "seekalpha",
     "version": "0.1.0",

@@ -31,7 +31,7 @@ const idl = JSON.parse(
   )
 );
 
-const PROGRAM_ID = new PublicKey("FEiFToWsHmCgjevuw9k8DNS8N8BdVdwTKostmvN9LS8B");
+const PROGRAM_ID = new PublicKey("9URCH6UhsMmgwX9xr2L84fimrGjpH8r3xheaSaZ21qGb");
 const program = new Program(idl, provider);
 
 async function main() {
@@ -102,8 +102,19 @@ async function main() {
 
     const resolutionTime = Math.floor(Date.now() / 1000) + hoursFromNow * 3600;
 
+    // Market type: standard (default), flash1h, flash24h
+    const typeArg = (process.argv[6] || "standard").toLowerCase();
+    let marketType: any;
+    if (typeArg === "flash1h") {
+      marketType = { flash1H: {} };
+    } else if (typeArg === "flash24h") {
+      marketType = { flash24H: {} };
+    } else {
+      marketType = { standard: {} };
+    }
+
     const tx = await (program.methods as any)
-      .createMarket(title, description, new anchor.BN(resolutionTime))
+      .createMarket(title, description, new anchor.BN(resolutionTime), marketType)
       .accounts({
         config: configPda,
         market: marketPda,
@@ -114,7 +125,7 @@ async function main() {
       })
       .rpc();
 
-    console.log(`✅ Market #${marketId} created!`);
+    console.log(`✅ Market #${marketId} created! (type: ${typeArg})`);
     console.log("Market PDA:", marketPda.toString());
     console.log("TX:", tx);
   } else if (action === "list-markets") {
@@ -151,7 +162,7 @@ async function main() {
   } else {
     console.log("Usage:");
     console.log('  npx ts-node scripts/initialize.ts init');
-    console.log('  npx ts-node scripts/initialize.ts create-market "Title" "Description" <hoursFromNow>');
+    console.log('  npx ts-node scripts/initialize.ts create-market "Title" "Description" <hoursFromNow> [standard|flash1h|flash24h]');
     console.log('  npx ts-node scripts/initialize.ts list-markets');
   }
 }

@@ -1,4 +1,4 @@
-export const PROGRAM_ID_STR = "FEiFToWsHmCgjevuw9k8DNS8N8BdVdwTKostmvN9LS8B";
+export const PROGRAM_ID_STR = "9URCH6UhsMmgwX9xr2L84fimrGjpH8r3xheaSaZ21qGb";
 export const RPC_ENDPOINT = "https://api.devnet.solana.com";
 export const PLATFORM_FEE_BPS = 300; // 3%
 

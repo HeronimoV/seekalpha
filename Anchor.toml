@@ -3,10 +3,10 @@ seeds = false
 skip-lint = false
 
 [programs.localnet]
-seekalpha = "FEiFToWsHmCgjevuw9k8DNS8N8BdVdwTKostmvN9LS8B"
+seekalpha = "9URCH6UhsMmgwX9xr2L84fimrGjpH8r3xheaSaZ21qGb"
 
 [programs.devnet]
-seekalpha = "FEiFToWsHmCgjevuw9k8DNS8N8BdVdwTKostmvN9LS8B"
+seekalpha = "9URCH6UhsMmgwX9xr2L84fimrGjpH8r3xheaSaZ21qGb"
 
 [registry]
 url = "https://api.apr.dev"
