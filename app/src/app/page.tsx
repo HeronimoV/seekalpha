@@ -4,12 +4,16 @@ import { Hero } from "@/components/Hero";
 import { MarketCard } from "@/components/MarketCard";
 import { fetchAllMarkets, OnChainMarket } from "@/lib/program";
 import { inferCategory } from "@/lib/constants";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 const CATEGORIES = ["All", "Crypto", "Tech", "DeFi", "Sports", "Politics", "Memes", "Culture"];
 
+type SortOption = "newest" | "ending-soon" | "most-volume" | "highest-yes" | "highest-no";
+
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState("All");
+  const [sortBy, setSortBy] = useState<SortOption>("newest");
+  const [searchQuery, setSearchQuery] = useState("");
   const [markets, setMarkets] = useState<OnChainMarket[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -27,35 +31,104 @@ export default function Home() {
       });
   }, []);
 
-  const marketsWithCategory = markets.map((m) => ({
-    ...m,
-    category: inferCategory(m.title),
-  }));
+  const processedMarkets = useMemo(() => {
+    let result = markets.map((m) => ({
+      ...m,
+      category: inferCategory(m.title),
+    }));
 
-  const filteredMarkets =
-    activeCategory === "All"
-      ? marketsWithCategory
-      : marketsWithCategory.filter((m) => m.category === activeCategory);
+    // Filter by category
+    if (activeCategory !== "All") {
+      result = result.filter((m) => m.category === activeCategory);
+    }
+
+    // Filter by search
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(
+        (m) =>
+          m.title.toLowerCase().includes(q) ||
+          m.description.toLowerCase().includes(q)
+      );
+    }
+
+    // Sort
+    switch (sortBy) {
+      case "newest":
+        result.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+        break;
+      case "ending-soon":
+        result.sort((a, b) => a.resolutionTime.getTime() - b.resolutionTime.getTime());
+        break;
+      case "most-volume":
+        result.sort((a, b) => (b.yesPool + b.noPool) - (a.yesPool + a.noPool));
+        break;
+      case "highest-yes":
+        result.sort((a, b) => {
+          const aYes = (a.yesPool + a.noPool) > 0 ? a.yesPool / (a.yesPool + a.noPool) : 0.5;
+          const bYes = (b.yesPool + b.noPool) > 0 ? b.yesPool / (b.yesPool + b.noPool) : 0.5;
+          return bYes - aYes;
+        });
+        break;
+      case "highest-no":
+        result.sort((a, b) => {
+          const aNo = (a.yesPool + a.noPool) > 0 ? a.noPool / (a.yesPool + a.noPool) : 0.5;
+          const bNo = (b.yesPool + b.noPool) > 0 ? b.noPool / (b.yesPool + b.noPool) : 0.5;
+          return bNo - aNo;
+        });
+        break;
+    }
+
+    // Separate active vs resolved
+    const active = result.filter((m) => !m.resolved);
+    const resolved = result.filter((m) => m.resolved);
+
+    return { active, resolved };
+  }, [markets, activeCategory, sortBy, searchQuery]);
 
   return (
     <>
       <Hero />
 
-      {/* Category Filter */}
-      <div className="flex gap-2 mb-8 overflow-x-auto pb-2 hide-scrollbar">
-        {CATEGORIES.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setActiveCategory(cat)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition whitespace-nowrap ${
-              activeCategory === cat
-                ? "bg-seek-purple text-white"
-                : "bg-seek-card text-gray-400 hover:text-white border border-seek-border"
-            }`}
-          >
-            {cat}
-          </button>
-        ))}
+      {/* Search Bar */}
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="🔍 Search markets..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full bg-seek-card border border-seek-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-seek-purple placeholder-gray-500"
+        />
+      </div>
+
+      {/* Category Filter + Sort */}
+      <div className="flex flex-col sm:flex-row gap-3 mb-8">
+        <div className="flex gap-2 overflow-x-auto pb-2 hide-scrollbar flex-1">
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`px-4 py-1.5 rounded-full text-sm font-medium transition whitespace-nowrap ${
+                activeCategory === cat
+                  ? "bg-seek-purple text-white"
+                  : "bg-seek-card text-gray-400 hover:text-white border border-seek-border"
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value as SortOption)}
+          className="bg-seek-card border border-seek-border rounded-full px-4 py-1.5 text-sm text-gray-400 focus:outline-none focus:border-seek-purple shrink-0"
+        >
+          <option value="newest">🆕 Newest</option>
+          <option value="ending-soon">⏰ Ending Soon</option>
+          <option value="most-volume">💰 Most Volume</option>
+          <option value="highest-yes">🟢 Highest YES</option>
+          <option value="highest-no">🔴 Highest NO</option>
+        </select>
       </div>
 
       {/* Loading State */}
@@ -80,19 +153,39 @@ export default function Home() {
         </div>
       )}
 
-      {/* Markets Grid */}
-      {!loading && !error && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
-          {filteredMarkets.map((market) => (
-            <MarketCard key={market.id} market={market} />
-          ))}
-        </div>
+      {/* Active Markets */}
+      {!loading && !error && processedMarkets.active.length > 0 && (
+        <>
+          <div className="flex items-center gap-2 mb-4">
+            <span className="w-2 h-2 rounded-full bg-seek-teal animate-pulse"></span>
+            <h2 className="text-lg font-semibold">Active Markets ({processedMarkets.active.length})</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            {processedMarkets.active.map((market) => (
+              <MarketCard key={market.id} market={market} />
+            ))}
+          </div>
+        </>
       )}
 
-      {!loading && !error && filteredMarkets.length === 0 && (
+      {/* Resolved Markets */}
+      {!loading && !error && processedMarkets.resolved.length > 0 && (
+        <>
+          <div className="flex items-center gap-2 mb-4">
+            <h2 className="text-lg font-semibold text-gray-500">Resolved Markets ({processedMarkets.resolved.length})</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 opacity-60">
+            {processedMarkets.resolved.map((market) => (
+              <MarketCard key={market.id} market={market} />
+            ))}
+          </div>
+        </>
+      )}
+
+      {!loading && !error && processedMarkets.active.length === 0 && processedMarkets.resolved.length === 0 && (
         <div className="text-center py-16 text-gray-500">
           <p className="text-4xl mb-4">🔮</p>
-          <p>No markets in this category yet. Check back soon!</p>
+          <p>{searchQuery ? "No markets match your search." : "No markets in this category yet. Check back soon!"}</p>
         </div>
       )}
 
