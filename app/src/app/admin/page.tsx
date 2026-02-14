@@ -36,6 +36,7 @@ export default function AdminPage() {
     description: "",
     resolutionDate: "",
     resolutionTime: "23:59",
+    marketType: "standard" as "standard" | "flash1h" | "flash24h",
   });
   const [creating, setCreating] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
@@ -80,7 +81,7 @@ export default function AdminPage() {
   };
 
   const handleCreate = async () => {
-    if (!form.title || !form.description || !form.resolutionDate) {
+    if (!form.title || !form.description || (form.marketType === "standard" && !form.resolutionDate)) {
       setStatus("⚠️ Fill in all fields");
       return;
     }
@@ -99,12 +100,20 @@ export default function AdminPage() {
       const marketPda = getMarketPda(marketId);
       const vaultPda = getVaultPda(marketId);
 
-      const resolutionTimestamp = Math.floor(
-        new Date(`${form.resolutionDate}T${form.resolutionTime}:00Z`).getTime() / 1000
-      );
+      // For flash markets, resolution time is computed on-chain; pass 0
+      const resolutionTimestamp = form.marketType === "standard"
+        ? Math.floor(new Date(`${form.resolutionDate}T${form.resolutionTime}:00Z`).getTime() / 1000)
+        : 0;
+
+      // Build Anchor enum format
+      const marketTypeEnum = form.marketType === "flash1h"
+        ? { flash1H: {} }
+        : form.marketType === "flash24h"
+        ? { flash24H: {} }
+        : { standard: {} };
 
       const tx = await (program.methods as any)
-        .createMarket(form.title, form.description, new BN(resolutionTimestamp))
+        .createMarket(form.title, form.description, new BN(resolutionTimestamp), marketTypeEnum)
         .accounts({
           config: configPda,
           market: marketPda,
@@ -123,7 +132,7 @@ export default function AdminPage() {
       await connection.confirmTransaction(sig, "confirmed");
 
       setStatus(`✅ Market #${marketId} created! TX: ${sig.slice(0, 20)}...`);
-      setForm({ title: "", description: "", resolutionDate: "", resolutionTime: "23:59" });
+      setForm({ title: "", description: "", resolutionDate: "", resolutionTime: "23:59", marketType: "standard" });
 
       // Refresh markets
       const updated = await fetchAllMarkets();
@@ -228,6 +237,33 @@ export default function AdminPage() {
             <div className="text-xs text-gray-600 mt-1">{form.description.length}/512</div>
           </div>
 
+          <div>
+            <label className="text-sm text-gray-400 mb-1 block">Market Type</label>
+            <div className="flex gap-2">
+              {([
+                { value: "standard", label: "📋 Standard" },
+                { value: "flash1h", label: "⚡ Flash 1H" },
+                { value: "flash24h", label: "⚡ Flash 24H" },
+              ] as const).map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setForm({ ...form, marketType: opt.value })}
+                  className={`flex-1 py-2 rounded-lg text-sm font-medium transition ${
+                    form.marketType === opt.value
+                      ? opt.value !== "standard"
+                        ? "bg-amber-500 text-white"
+                        : "bg-seek-purple text-white"
+                      : "bg-seek-dark border border-seek-border text-gray-400 hover:text-white"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {form.marketType === "standard" && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-sm text-gray-400 mb-1 block">Resolution Date</label>
@@ -248,6 +284,13 @@ export default function AdminPage() {
               />
             </div>
           </div>
+          )}
+
+          {form.marketType !== "standard" && (
+            <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-sm text-amber-400">
+              ⚡ Flash market — resolution time is auto-set to {form.marketType === "flash1h" ? "1 hour" : "24 hours"} from creation.
+            </div>
+          )}
 
           <button
             onClick={handleCreate}

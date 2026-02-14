@@ -7,11 +7,14 @@ import { inferCategory } from "@/lib/constants";
 import { useState, useEffect, useMemo } from "react";
 
 const CATEGORIES = ["All", "Crypto", "Tech", "DeFi", "Sports", "Politics", "Memes", "Culture"];
+const MARKET_TYPE_FILTERS = ["All", "Standard", "Flash ⚡"] as const;
+type MarketTypeFilter = typeof MARKET_TYPE_FILTERS[number];
 
 type SortOption = "newest" | "ending-soon" | "most-volume" | "highest-yes" | "highest-no";
 
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState("All");
+  const [activeTypeFilter, setActiveTypeFilter] = useState<MarketTypeFilter>("All");
   const [sortBy, setSortBy] = useState<SortOption>("newest");
   const [searchQuery, setSearchQuery] = useState("");
   const [markets, setMarkets] = useState<OnChainMarket[]>([]);
@@ -40,6 +43,13 @@ export default function Home() {
     // Filter by category
     if (activeCategory !== "All") {
       result = result.filter((m) => m.category === activeCategory);
+    }
+
+    // Filter by market type
+    if (activeTypeFilter === "Standard") {
+      result = result.filter((m) => m.marketType === "standard");
+    } else if (activeTypeFilter === "Flash ⚡") {
+      result = result.filter((m) => m.marketType === "flash1h" || m.marketType === "flash24h");
     }
 
     // Filter by search
@@ -84,7 +94,7 @@ export default function Home() {
     const resolved = result.filter((m) => m.resolved);
 
     return { active, resolved };
-  }, [markets, activeCategory, sortBy, searchQuery]);
+  }, [markets, activeCategory, activeTypeFilter, sortBy, searchQuery]);
 
   return (
     <>
@@ -99,6 +109,25 @@ export default function Home() {
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full bg-seek-card border border-seek-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-seek-purple placeholder-gray-500"
         />
+      </div>
+
+      {/* Market Type Filter */}
+      <div className="flex gap-2 mb-4">
+        {MARKET_TYPE_FILTERS.map((filter) => (
+          <button
+            key={filter}
+            onClick={() => setActiveTypeFilter(filter)}
+            className={`px-4 py-1.5 rounded-full text-sm font-medium transition whitespace-nowrap ${
+              activeTypeFilter === filter
+                ? filter === "Flash ⚡"
+                  ? "bg-amber-500 text-white"
+                  : "bg-seek-purple text-white"
+                : "bg-seek-card text-gray-400 hover:text-white border border-seek-border"
+            }`}
+          >
+            {filter}
+          </button>
+        ))}
       </div>
 
       {/* Category Filter + Sort */}

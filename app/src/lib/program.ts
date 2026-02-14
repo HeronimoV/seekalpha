@@ -71,6 +71,8 @@ export function getPredictionPda(marketPda: PublicKey, userPubkey: PublicKey): P
 
 // ─── READ FUNCTIONS ───
 
+export type MarketType = "standard" | "flash1h" | "flash24h";
+
 export interface OnChainMarket {
   id: number;
   creator: string;
@@ -82,6 +84,7 @@ export interface OnChainMarket {
   resolved: boolean;
   outcome: boolean | null;
   createdAt: Date;
+  marketType: MarketType;
   pda: string;
 }
 
@@ -101,6 +104,14 @@ export async function fetchMarket(marketId: number): Promise<OnChainMarket> {
   const program = getReadOnlyProgram();
   const marketPda = getMarketPda(marketId);
   const market = await (program.account as any).market.fetch(marketPda);
+
+  // Parse market type from on-chain enum
+  let marketType: MarketType = "standard";
+  if (market.marketType) {
+    if ("flash1H" in market.marketType || "flash1h" in market.marketType) marketType = "flash1h";
+    else if ("flash24H" in market.marketType || "flash24h" in market.marketType) marketType = "flash24h";
+  }
+
   return {
     id: market.id.toNumber(),
     creator: market.creator.toString(),
@@ -112,6 +123,7 @@ export async function fetchMarket(marketId: number): Promise<OnChainMarket> {
     resolved: market.resolved,
     outcome: market.outcome,
     createdAt: new Date(market.createdAt.toNumber() * 1000),
+    marketType,
     pda: marketPda.toString(),
   };
 }

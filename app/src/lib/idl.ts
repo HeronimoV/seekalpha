@@ -23,6 +23,15 @@ export const IDL = {
       "args": []
     },
     {
+      "name": "close_flash_market",
+      "discriminator": [36,93,151,173,52,232,32,88],
+      "accounts": [
+        {"name": "market","writable": true},
+        {"name": "caller","signer": true}
+      ],
+      "args": []
+    },
+    {
       "name": "create_market",
       "discriminator": [103,226,97,235,200,188,251,254],
       "accounts": [
@@ -36,7 +45,8 @@ export const IDL = {
       "args": [
         {"name": "title","type": "string"},
         {"name": "description","type": "string"},
-        {"name": "resolution_time","type": "i64"}
+        {"name": "resolution_time","type": "i64"},
+        {"name": "market_type","type": {"defined": {"name": "MarketType"}}}
       ]
     },
     {
@@ -73,6 +83,24 @@ export const IDL = {
         {"name": "admin","signer": true,"relations": ["config"]}
       ],
       "args": [{"name": "outcome","type": "bool"}]
+    },
+    {
+      "name": "update_admin",
+      "discriminator": [161,176,40,213,60,184,179,228],
+      "accounts": [
+        {"name": "config","writable": true,"pda": {"seeds": [{"kind": "const","value": [99,111,110,102,105,103]}]}},
+        {"name": "admin","signer": true,"relations": ["config"]}
+      ],
+      "args": [{"name": "new_admin","type": "pubkey"}]
+    },
+    {
+      "name": "update_treasury",
+      "discriminator": [60,16,243,66,96,59,254,131],
+      "accounts": [
+        {"name": "config","writable": true,"pda": {"seeds": [{"kind": "const","value": [99,111,110,102,105,103]}]}},
+        {"name": "admin","signer": true,"relations": ["config"]}
+      ],
+      "args": [{"name": "new_treasury","type": "pubkey"}]
     }
   ],
   "accounts": [
@@ -91,7 +119,8 @@ export const IDL = {
     {"code": 6007,"name": "ZeroAmount","msg": "Amount must be greater than 0"},
     {"code": 6008,"name": "AlreadyClaimed","msg": "Winnings already claimed"},
     {"code": 6009,"name": "LostPrediction","msg": "You lost this prediction"},
-    {"code": 6010,"name": "PositionMismatch","msg": "Cannot change sides — you already bet the other way"}
+    {"code": 6010,"name": "PositionMismatch","msg": "Cannot change sides — you already bet the other way"},
+    {"code": 6011,"name": "NotFlashMarket","msg": "Not a flash market"}
   ],
   "types": [
     {"name": "Market","type": {"kind": "struct","fields": [
@@ -105,7 +134,13 @@ export const IDL = {
       {"name": "resolved","type": "bool"},
       {"name": "outcome","type": {"option": "bool"}},
       {"name": "created_at","type": "i64"},
+      {"name": "market_type","type": {"defined": {"name": "MarketType"}}},
       {"name": "bump","type": "u8"}
+    ]}},
+    {"name": "MarketType","type": {"kind": "enum","variants": [
+      {"name": "Standard"},
+      {"name": "Flash1H"},
+      {"name": "Flash24H"}
     ]}},
     {"name": "PlatformConfig","type": {"kind": "struct","fields": [
       {"name": "admin","type": "pubkey"},

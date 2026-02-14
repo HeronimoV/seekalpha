@@ -6,6 +6,8 @@ import { AnchorProvider } from "@coral-xyz/anchor";
 import { PLATFORM_FEE_BPS } from "@/lib/constants";
 import { OnChainMarket, buildPlacePredictionTx, getBalance } from "@/lib/program";
 import { BetSuccess } from "./BetSuccess";
+import { CountdownTimer } from "./CountdownTimer";
+import { recordPrediction } from "@/lib/gamification";
 
 interface MarketCardProps {
   market: OnChainMarket & { category: string };
@@ -113,6 +115,11 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
         const signature = await connection.sendRawTransaction(signedTx.serialize());
         await connection.confirmTransaction(signature, "confirmed");
 
+        // Record gamification
+        if (publicKey) {
+          recordPrediction(publicKey.toString(), amount, market.createdAt);
+        }
+
         // Calculate payout for display
         const payout = payouts ? (position ? payouts.yes.payout : payouts.no.payout) : amount;
         setLastBet({ position, amount, payout, sig: signature });
@@ -139,14 +146,26 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
   );
 
   const isExpired = market.resolutionTime.getTime() < Date.now();
+  const isFlash = market.marketType === "flash1h" || market.marketType === "flash24h";
 
   return (
-    <div className="gradient-border rounded-xl bg-seek-card p-4 md:p-5 hover:bg-seek-card/80 transition">
-      {/* Category + Time */}
+    <div className={`rounded-xl bg-seek-card p-4 md:p-5 hover:bg-seek-card/80 transition ${
+      isFlash
+        ? "border border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.08)]"
+        : "gradient-border"
+    }`}>
+      {/* Category + Time + Flash Badge */}
       <div className="flex items-center justify-between mb-3">
-        <span className="text-xs px-2 py-0.5 rounded-full bg-seek-teal/20 text-seek-teal">
-          {market.category}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs px-2 py-0.5 rounded-full bg-seek-teal/20 text-seek-teal">
+            {market.category}
+          </span>
+          {isFlash && (
+            <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-medium">
+              ⚡ Flash {market.marketType === "flash1h" ? "1H" : "24H"}
+            </span>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           {market.resolved && (
             <span className={`text-xs px-2 py-0.5 rounded-full ${
@@ -155,7 +174,11 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
               {market.outcome ? "✅ YES" : "❌ NO"}
             </span>
           )}
-          <span className="text-xs text-gray-500">{timeLeft()}</span>
+          {isFlash && !market.resolved ? (
+            <CountdownTimer targetDate={market.resolutionTime} />
+          ) : (
+            <span className="text-xs text-gray-500">{timeLeft()}</span>
+          )}
         </div>
       </div>
 

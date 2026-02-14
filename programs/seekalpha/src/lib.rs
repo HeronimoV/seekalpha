@@ -3,6 +3,15 @@ use anchor_lang::prelude::*;
 declare_id!("FEiFToWsHmCgjevuw9k8DNS8N8BdVdwTKostmvN9LS8B");
 
 pub const PLATFORM_FEE_BPS: u16 = 300; // 3%
+pub const FLASH_1H_DURATION: i64 = 3600; // 1 hour in seconds
+pub const FLASH_24H_DURATION: i64 = 86400; // 24 hours in seconds
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq, Eq, InitSpace)]
+pub enum MarketType {
+    Standard,
+    Flash1H,
+    Flash24H,
+}
 
 #[program]
 pub mod seekalpha {
@@ -24,15 +33,12 @@ pub mod seekalpha {
         title: String,
         description: String,
         resolution_time: i64,
+        market_type: MarketType,
     ) -> Result<()> {
         require!(title.len() <= 128, SeekAlphaError::TitleTooLong);
         require!(description.len() <= 512, SeekAlphaError::DescriptionTooLong);
 
         let clock = Clock::get()?;
-        require!(
-            resolution_time > clock.unix_timestamp,
-            SeekAlphaError::InvalidResolutionTime
-        );
 
         let config = &mut ctx.accounts.config;
         let market = &mut ctx.accounts.market;
@@ -43,14 +49,54 @@ pub mod seekalpha {
         market.description = description;
         market.yes_pool = 0;
         market.no_pool = 0;
-        market.resolution_time = resolution_time;
         market.resolved = false;
         market.outcome = None;
         market.created_at = clock.unix_timestamp;
+        market.market_type = market_type;
         market.bump = ctx.bumps.market;
+
+        // For flash markets, compute resolution_time from created_at + duration
+        match market_type {
+            MarketType::Flash1H => {
+                market.resolution_time = clock.unix_timestamp + FLASH_1H_DURATION;
+            }
+            MarketType::Flash24H => {
+                market.resolution_time = clock.unix_timestamp + FLASH_24H_DURATION;
+            }
+            MarketType::Standard => {
+                require!(
+                    resolution_time > clock.unix_timestamp,
+                    SeekAlphaError::InvalidResolutionTime
+                );
+                market.resolution_time = resolution_time;
+            }
+        }
 
         config.market_count += 1;
 
+        Ok(())
+    }
+
+    /// Close a flash market after expiry — anyone can call this
+    /// For V1: still requires admin to actually resolve (set outcome)
+    pub fn close_flash_market(ctx: Context<CloseFlashMarket>) -> Result<()> {
+        let market = &mut ctx.accounts.market;
+
+        require!(!market.resolved, SeekAlphaError::MarketResolved);
+        require!(
+            market.market_type != MarketType::Standard,
+            SeekAlphaError::NotFlashMarket
+        );
+
+        let clock = Clock::get()?;
+        require!(
+            clock.unix_timestamp >= market.resolution_time,
+            SeekAlphaError::MarketNotExpired
+        );
+
+        // Mark as expired but not resolved — admin still needs to set outcome
+        // In future versions, this could use an oracle price
+        // For now we just emit an event / allow admin resolution
         Ok(())
     }
 
@@ -305,6 +351,13 @@ pub struct ResolveMarket<'info> {
 }
 
 #[derive(Accounts)]
+pub struct CloseFlashMarket<'info> {
+    #[account(mut)]
+    pub market: Account<'info, Market>,
+    pub caller: Signer<'info>,
+}
+
+#[derive(Accounts)]
 pub struct ClaimWinnings<'info> {
     #[account(
         seeds = [b"config"],
@@ -362,6 +415,7 @@ pub struct Market {
     pub resolved: bool,
     pub outcome: Option<bool>,
     pub created_at: i64,
+    pub market_type: MarketType,
     pub bump: u8,
 }
 
@@ -402,4 +456,6 @@ pub enum SeekAlphaError {
     LostPrediction,
     #[msg("Cannot change sides — you already bet the other way")]
     PositionMismatch,
+    #[msg("Not a flash market")]
+    NotFlashMarket,
 }

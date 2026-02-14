@@ -14,6 +14,13 @@ import {
   OnChainMarket,
 } from "@/lib/program";
 import { inferCategory } from "@/lib/constants";
+import {
+  loadGamification,
+  updateStreak,
+  ALL_BADGES,
+  getBadgeDetails,
+  GamificationData,
+} from "@/lib/gamification";
 
 const WalletMultiButton = dynamic(
   () =>
@@ -37,6 +44,7 @@ export default function PortfolioPage() {
   const [predictions, setPredictions] = useState<UserPred[]>([]);
   const [loading, setLoading] = useState(false);
   const [claimingId, setClaimingId] = useState<number | null>(null);
+  const [gamification, setGamification] = useState<GamificationData | null>(null);
 
   useEffect(() => {
     if (!connected || !publicKey) return;
@@ -62,6 +70,15 @@ export default function PortfolioPage() {
         }
 
         setPredictions(preds);
+
+        // Update streaks from resolved markets
+        const walletStr = publicKey.toString();
+        for (const pred of preds) {
+          if (pred.market.resolved) {
+            updateStreak(walletStr, pred.market.outcome === pred.position);
+          }
+        }
+        setGamification(loadGamification(walletStr));
       } catch (err) {
         console.error("Failed to load predictions:", err);
       } finally {
@@ -157,6 +174,39 @@ export default function PortfolioPage() {
           </div>
         </div>
       </div>
+
+      {/* Badges & Streak */}
+      {gamification && (
+        <div className="mb-10">
+          <div className="flex items-center gap-4 mb-4">
+            <h2 className="text-xl font-semibold">Achievements</h2>
+            {gamification.streak > 0 && (
+              <span className="text-sm px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 font-medium">
+                🔥 {gamification.streak}-Streak
+              </span>
+            )}
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+            {ALL_BADGES.map((badge) => {
+              const earned = gamification.badges.includes(badge.id);
+              return (
+                <div
+                  key={badge.id}
+                  className={`rounded-xl p-4 text-center border transition ${
+                    earned
+                      ? "bg-seek-card border-seek-teal/30"
+                      : "bg-seek-card/40 border-seek-border opacity-40"
+                  }`}
+                >
+                  <div className="text-2xl mb-1">{badge.icon}</div>
+                  <div className="text-xs font-medium">{badge.name}</div>
+                  <div className="text-[10px] text-gray-500 mt-1">{badge.description}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Loading */}
       {loading && (

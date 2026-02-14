@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { fetchAllMarkets, OnChainMarket } from "@/lib/program";
+import { loadGamification, GamificationData } from "@/lib/gamification";
 
 interface PlatformStats {
   totalMarkets: number;
@@ -11,9 +13,11 @@ interface PlatformStats {
 }
 
 export default function LeaderboardPage() {
+  const { publicKey } = useWallet();
   const [stats, setStats] = useState<PlatformStats | null>(null);
   const [markets, setMarkets] = useState<OnChainMarket[]>([]);
   const [loading, setLoading] = useState(true);
+  const [gamification, setGamification] = useState<GamificationData | null>(null);
 
   useEffect(() => {
     fetchAllMarkets()
@@ -30,9 +34,12 @@ export default function LeaderboardPage() {
           ),
         });
         setLoading(false);
+        if (publicKey) {
+          setGamification(loadGamification(publicKey.toString()));
+        }
       })
       .catch(() => setLoading(false));
-  }, []);
+  }, [publicKey]);
 
   // Sort markets by total volume
   const topMarkets = [...markets]
@@ -114,15 +121,48 @@ export default function LeaderboardPage() {
             </div>
           </div>
 
-          {/* Coming Soon */}
-          <div className="bg-seek-card border border-seek-border rounded-xl p-8 text-center">
-            <div className="text-4xl mb-4">🏅</div>
-            <h2 className="text-xl font-bold mb-2">User Rankings Coming Soon</h2>
-            <p className="text-gray-400 text-sm max-w-md mx-auto">
-              Win rate tracking, prediction streaks, and user profiles are in Phase 4.
-              Start placing predictions now to build your track record!
-            </p>
-          </div>
+          {/* Your Stats */}
+          {gamification ? (
+            <div className="bg-seek-card border border-seek-border rounded-xl p-6 mb-8">
+              <h2 className="text-xl font-semibold mb-4">🏅 Your Stats</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-amber-400">🔥 {gamification.streak}</div>
+                  <div className="text-xs text-gray-400 mt-1">Current Streak</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-seek-purple">{gamification.maxStreak}</div>
+                  <div className="text-xs text-gray-400 mt-1">Best Streak</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-seek-teal">{gamification.totalPredictions}</div>
+                  <div className="text-xs text-gray-400 mt-1">Total Predictions</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-white">{gamification.badges.length}</div>
+                  <div className="text-xs text-gray-400 mt-1">Badges Earned</div>
+                </div>
+              </div>
+              {gamification.badges.length > 0 && (
+                <div className="flex gap-2 mt-4 justify-center flex-wrap">
+                  {gamification.badges.map((id) => {
+                    const badge = { "first-prediction": "🔮", "streak-3": "🔥", "streak-5": "🔥🔥", "whale": "🐋", "early-bird": "🐦" }[id];
+                    return (
+                      <span key={id} className="text-lg" title={id}>{badge}</span>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="bg-seek-card border border-seek-border rounded-xl p-8 text-center">
+              <div className="text-4xl mb-4">🏅</div>
+              <h2 className="text-xl font-bold mb-2">Connect Wallet to See Your Stats</h2>
+              <p className="text-gray-400 text-sm max-w-md mx-auto">
+                Track your prediction streaks, badges, and rankings.
+              </p>
+            </div>
+          )}
         </>
       )}
     </div>
