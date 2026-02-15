@@ -22,7 +22,7 @@
 - Mobile-first design
 - AI-powered development (2 engineers worth of output from 1 person + AI)
 
-**What We're Asking:** $2,000–5,000 seed investment for audit, mainnet launch, and 6 months of operations.
+**What We're Asking:** $3,000–6,000 seed investment for audit, AI development, mainnet launch, and 6 months of operations.
 
 **Projected ROI:** Break-even at ~$5K daily volume. At $50K daily volume (0.1% of Polymarket), the platform generates ~$1,500/day in fees ($45K/month).
 
@@ -283,7 +283,7 @@
 | Vercel (frontend) | $0 | Free tier sufficient |
 | Domain renewal | ~$1.25 | Annual paid |
 | OpenClaw (AI dev) | Already running | Chito's existing setup |
-| Second OpenClaw bot (Opus) | $50-100/mo | If added for parallel dev |
+| Second OpenClaw bot (Opus) | $50-100/mo | Parallel dev — 2x build speed |
 | Moderator | $0-200 | Depending on arrangement |
 | Solana RPC (mainnet) | $0-50 | Free tier → Helius/Triton |
 | **Total monthly** | **$65-365** | |
@@ -303,16 +303,19 @@ Based on 3% fee on winning payouts:
 **Break-even point:** ~$5,000/month in volume (~$165/day)
 This is achievable with ~50 active users betting an average of $3.30/day.
 
-### Funding Request: $2,000-5,000
+### Funding Request: $3,000-6,000
 
 | Allocation | Amount | Purpose |
 |-----------|--------|---------|
 | Smart contract audit | $1,500-3,000 | Security verification before mainnet |
 | LLC + Legal | $400-700 | Business entity + Terms of Service |
 | Treasury SOL | $500-1,000 | Mainnet operations + seed liquidity |
+| 2nd AI Developer (6 months) | $300-600 | Second Opus-class AI running in parallel — doubles dev speed |
 | Marketing budget | $200-500 | First KOL partnerships + contests |
 | Buffer | $200-500 | Unexpected costs |
-| **Total** | **$2,800-5,700** | |
+| **Total** | **$3,100-6,300** | |
+
+> **Note on AI Development Costs:** Our entire engineering team runs on two AI developer instances at ~$50-100/month each. A traditional startup would spend $10,000-20,000/month on a single senior developer. This is our unfair advantage — venture-grade engineering output at indie-hacker prices.
 
 ### Return on Investment
 
@@ -417,7 +420,7 @@ All milestones are **on-chain verifiable** — no trusting spreadsheets, the blo
 
 ## The Ask
 
-**$2,000-5,000 seed investment** to cover audit, legal, and launch costs.
+**$3,000-6,000 seed investment** to cover audit, legal, AI development, and launch costs.
 
 **What investors get:**
 - Equity stake in the LLC (percentage negotiable based on investment amount)
