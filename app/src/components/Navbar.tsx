@@ -55,6 +55,9 @@ export const Navbar: FC = () => {
           <a href="/leaderboard" className="text-sm text-gray-400 hover:text-white transition">
             Leaderboard
           </a>
+          <a href="/propose" className="text-sm text-gray-400 hover:text-white transition">
+            Propose
+          </a>
           <a href="/about" className="text-sm text-gray-400 hover:text-white transition">
             About
           </a>
@@ -100,6 +103,9 @@ export const Navbar: FC = () => {
           </a>
           <a href="/leaderboard" className="block py-2 text-sm text-gray-400 hover:text-white" onClick={() => setMenuOpen(false)}>
             🏆 Leaderboard
+          </a>
+          <a href="/propose" className="block py-2 text-sm text-gray-400 hover:text-white" onClick={() => setMenuOpen(false)}>
+            💡 Propose Market
           </a>
           <a href="/about" className="block py-2 text-sm text-gray-400 hover:text-white" onClick={() => setMenuOpen(false)}>
             ℹ️ About

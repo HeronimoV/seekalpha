@@ -2,6 +2,7 @@
 
 import { Hero } from "@/components/Hero";
 import { MarketCard } from "@/components/MarketCard";
+import { NotificationBanners } from "@/components/NotificationBanners";
 import { fetchAllMarkets, OnChainMarket } from "@/lib/program";
 import { inferCategory } from "@/lib/constants";
 import { useState, useEffect, useMemo } from "react";
@@ -181,6 +182,9 @@ export default function Home() {
           </button>
         </div>
       )}
+
+      {/* Notification Banners */}
+      {!loading && !error && <NotificationBanners markets={markets} />}
 
       {/* Active Markets */}
       {!loading && !error && processedMarkets.active.length > 0 && (

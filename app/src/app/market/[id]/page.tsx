@@ -12,6 +12,7 @@ export default function MarketPage() {
   const [market, setMarket] = useState<(OnChainMarket & { category: string }) | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [shareCopied, setShareCopied] = useState(false);
 
   useEffect(() => {
     if (isNaN(id)) {
@@ -88,6 +89,38 @@ export default function MarketPage() {
 
       {/* The Market Card (with full betting UI) */}
       <MarketCard market={market} />
+
+      {/* Share Buttons */}
+      <div className="mt-6 flex gap-3">
+        <button
+          onClick={() => {
+            navigator.clipboard.writeText(window.location.href);
+            setShareCopied(true);
+            setTimeout(() => setShareCopied(false), 2000);
+          }}
+          className="flex-1 py-2.5 rounded-lg bg-seek-card border border-seek-border text-sm text-gray-400 hover:text-white hover:border-seek-purple transition"
+        >
+          {shareCopied ? "✅ Link Copied!" : "🔗 Copy Link"}
+        </button>
+        <a
+          href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`What do you think? "${market.title}" — predict now on @Seek_Alpha_`)}&url=${encodeURIComponent(`https://seekalpha.bet/market/${market.id}`)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-1 py-2.5 rounded-lg bg-gray-800 border border-seek-border text-sm text-gray-400 hover:text-white hover:border-gray-600 transition text-center"
+        >
+          𝕏 Share on X
+        </a>
+      </div>
+
+      {/* Recent Activity */}
+      <div className="mt-6 bg-seek-card border border-seek-border rounded-xl p-5">
+        <h3 className="font-semibold text-sm text-gray-300 mb-3">Recent Activity</h3>
+        <div className="text-center py-6 text-gray-500 text-sm">
+          <p className="text-2xl mb-2">📊</p>
+          <p>Activity feed coming soon!</p>
+          <p className="text-xs text-gray-600 mt-1">On-chain predictions will appear here</p>
+        </div>
+      </div>
 
       {/* Market Details */}
       <div className="mt-6 bg-seek-card border border-seek-border rounded-xl p-5 space-y-4">

@@ -190,16 +190,25 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
 
       {/* Probability Bar */}
       <div className="mb-4">
-        <div className="flex justify-between text-sm mb-1">
-          <span className="text-seek-teal font-medium">YES {yesPercent.toFixed(1)}%</span>
-          <span className="text-red-400 font-medium">NO {noPercent.toFixed(1)}%</span>
-        </div>
-        <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-gradient-to-r from-seek-teal to-seek-teal/60 rounded-full transition-all"
-            style={{ width: `${yesPercent}%` }}
-          />
-        </div>
+        {totalPool > 0 ? (
+          <>
+            <div className="flex justify-between text-sm mb-1">
+              <span className="text-seek-teal font-medium">YES {yesPercent.toFixed(1)}%</span>
+              <span className="text-red-400 font-medium">NO {noPercent.toFixed(1)}%</span>
+            </div>
+            <div className="w-full h-2 bg-red-400/40 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-seek-teal to-seek-teal/60 rounded-full transition-all"
+                style={{ width: `${yesPercent}%` }}
+              />
+            </div>
+          </>
+        ) : (
+          <div className="text-center py-1">
+            <span className="text-xs text-gray-500 italic">No bets yet — be first! 🚀</span>
+            <div className="w-full h-2 bg-gray-700 rounded-full mt-1" />
+          </div>
+        )}
       </div>
 
       {/* Pool Info */}
