@@ -321,22 +321,121 @@ This covers monthly operating costs including AI development. Achievable with ~2
 
 ### Return on Investment
 
-**Conservative scenario** (reaching $50K monthly volume by Month 6):
+---
+
+### 🔴 Worst Case Scenario
+*"What if it doesn't work?"*
+
+- Seeker phone delays significantly or flops
+- Prediction market demand on Solana doesn't materialize
+- We struggle to get past 50 active users
+- Monthly volume stays under $5,000
+
+**Financial impact:**
+- Monthly revenue: $0-150
+- 6-month total revenue: $0-900
+- **Total loss on $10K investment: $9,100-10,000**
+- Monthly AI costs: $600-1,200 (can be shut off anytime)
+
+**What you still walk away with:**
+- A fully built, audited, open source prediction market platform
+- An LLC with IP (sellable or pivotable)
+- The $SKR airdrop allocation (could be worth $500-5,000+ regardless of our volume)
+- All the code, branding, and community — could pivot to a different chain or market
+- Real entrepreneurial experience and a portfolio piece
+
+**Mitigations:**
+- We can cut the 2nd AI bot at any time to halve dev costs
+- We can pause mainnet and stay on devnet if traction isn't there
+- The $SKR airdrop alone could recover a significant portion of the investment
+- Monthly burn is low enough to sustain for 6+ months even with zero revenue
+- Worst case, the platform has resale/acquihire value to other Solana projects
+
+**Probability: ~20%** — prediction markets are a proven market and we have a real first-mover advantage on Seeker. Total failure would require multiple things going wrong simultaneously.
+
+---
+
+### 🟡 Conservative Scenario
+*"It works, but slowly"*
+
+- Seeker launches, we're in the dApp Store
+- Steady but modest adoption — ~100-200 active users
+- Monthly volume reaches $50K by Month 6
+
+**Financial impact:**
 - Monthly revenue: $1,500
 - Annual projected: $18,000
-- ROI on $10K investment: **80% in year 1**
+- Monthly costs: ~$1,000
+- **Monthly net profit: ~$500**
+- **ROI on $10K investment: ~80% in year 1**
+- Break-even on investment: ~Month 10
 
-**Moderate scenario** (reaching $100K monthly volume by Month 6):
+---
+
+### 🟢 Moderate Scenario (Most Likely)
+*"We execute well and catch the Seeker wave"*
+
+- Seeker launches on time, dApp Store gets attention
+- SeekAlpha becomes a go-to app for Seeker users
+- 500-1,000 active users, monthly volume reaches $100K by Month 6
+- Community-driven growth kicks in
+
+**Financial impact:**
 - Monthly revenue: $3,000
 - Annual projected: $36,000
-- ROI on $10K investment: **260% in year 1**
+- Monthly costs: ~$1,000
+- **Monthly net profit: ~$2,000**
+- **ROI on $10K investment: ~260% in year 1**
+- Break-even on investment: ~Month 5
+- $SKR airdrop potentially worth $2,000-10,000+
 
-**Bull scenario** (reaching $500K monthly volume — small fraction of Polymarket):
-- Monthly revenue: $15,000
-- Annual projected: $180,000
-- ROI on $10K investment: **1,700% in year 1**
+---
 
-*Note: As revenue grows, AI costs stay flat — margins improve dramatically at scale.*
+### 🚀 Best Case Scenario
+*"We become THE prediction market on Solana"*
+
+- Seeker launches big, SeekAlpha goes viral on crypto Twitter
+- A major event (election, crypto crash, sports season) drives massive prediction market interest
+- Featured by Solana Foundation / Seeker team
+- 5,000+ active users, monthly volume reaches $1M+ by Month 6
+- KOLs and influencers adopt the platform organically
+- Other projects want to integrate our markets (API/embed)
+
+**Financial impact:**
+- Monthly revenue: $30,000+
+- Annual projected: $360,000+
+- Monthly costs: ~$1,500 (added RPC costs at scale)
+- **Monthly net profit: $28,500+**
+- **ROI on $10K investment: 3,500%+ in year 1**
+- Break-even on investment: ~Week 2 of mainnet
+- $SKR airdrop could be worth $10,000-50,000+
+- Platform valuation: $500K-2M+ (based on revenue multiples)
+- Potential acquisition interest from larger DeFi protocols
+- Could raise a real seed round at $1-5M valuation
+
+**What makes this possible:**
+- Polymarket proved the demand ($9B+ volume in 2025)
+- There's literally zero competition on Solana Mobile right now
+- 150K Seeker pre-orders = built-in distribution
+- One viral market (think "Will Trump win?" type moment) could 10x our volume overnight
+- Prediction markets have network effects — more users = better odds = more users
+
+**Probability: ~15%** — requires good timing and some luck, but the conditions exist for it to happen.
+
+---
+
+### Scenario Summary
+
+| Scenario | Probability | 6-Month Revenue | ROI (Year 1) | Investment Recovery |
+|----------|------------|----------------|-------------|-------------------|
+| 🔴 Worst Case | ~20% | $0-900 | -90% to -100% | Never (but assets remain) |
+| 🟡 Conservative | ~30% | $4,500-9,000 | ~80% | ~10 months |
+| 🟢 Moderate | ~35% | $9,000-18,000 | ~260% | ~5 months |
+| 🚀 Best Case | ~15% | $90,000-180,000 | ~3,500%+ | ~2 weeks |
+
+**Expected value (probability-weighted):** ~$18,000-30,000 in year 1 revenue on a $10K investment.
+
+*Even weighting for worst case, the expected return is strongly positive. The asymmetric upside (best case is 35x return vs worst case is 1x loss) makes this a favorable risk/reward profile — similar to early-stage venture investing but at a fraction of the capital.*
 
 ---
 
