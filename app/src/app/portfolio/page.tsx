@@ -21,6 +21,8 @@ import {
   getBadgeDetails,
   GamificationData,
 } from "@/lib/gamification";
+import { PortfolioSkeleton } from "@/components/Skeleton";
+import { EXPLORER_BASE } from "@/lib/constants";
 
 const WalletMultiButton = dynamic(
   () =>
@@ -209,12 +211,7 @@ export default function PortfolioPage() {
       )}
 
       {/* Loading */}
-      {loading && (
-        <div className="text-center py-16">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-seek-purple mb-4"></div>
-          <p className="text-gray-400">Loading your predictions from Solana...</p>
-        </div>
-      )}
+      {loading && <PortfolioSkeleton />}
 
       {/* Predictions List */}
       {!loading && predictions.length > 0 && (
@@ -278,10 +275,75 @@ export default function PortfolioPage() {
         </>
       )}
 
+      {/* Transaction History */}
+      {!loading && predictions.length > 0 && (
+        <div className="mt-12">
+          <h2 className="text-xl font-semibold mb-4">📜 Transaction History</h2>
+          <div className="bg-seek-card border border-seek-border rounded-xl overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-seek-border text-gray-500 text-left">
+                    <th className="px-4 py-3 font-medium">Market</th>
+                    <th className="px-4 py-3 font-medium">Position</th>
+                    <th className="px-4 py-3 font-medium">Amount</th>
+                    <th className="px-4 py-3 font-medium">Status</th>
+                    <th className="px-4 py-3 font-medium">Date</th>
+                    <th className="px-4 py-3 font-medium">Explorer</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-seek-border/50">
+                  {predictions.map((pred) => {
+                    const isWin = pred.market.resolved && pred.market.outcome === pred.position;
+                    const isLoss = pred.market.resolved && pred.market.outcome !== pred.position;
+                    return (
+                      <tr key={pred.market.id} className="hover:bg-seek-dark/30 transition">
+                        <td className="px-4 py-3 max-w-[200px] truncate">{pred.market.title}</td>
+                        <td className="px-4 py-3">
+                          <span className={pred.position ? "text-seek-teal font-medium" : "text-red-400 font-medium"}>
+                            {pred.position ? "YES" : "NO"}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-white font-medium">{pred.amount.toFixed(2)} SOL</td>
+                        <td className="px-4 py-3">
+                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                            !pred.market.resolved
+                              ? "bg-yellow-500/20 text-yellow-400"
+                              : isWin
+                              ? "bg-green-500/20 text-green-400"
+                              : "bg-red-500/20 text-red-400"
+                          }`}>
+                            {!pred.market.resolved ? "Active" : isWin ? "Won" : "Lost"}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-gray-500 text-xs">
+                          {pred.market.createdAt.toLocaleDateString()}
+                        </td>
+                        <td className="px-4 py-3">
+                          <a
+                            href={`https://explorer.solana.com/address/${pred.market.pda}?cluster=devnet`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-seek-teal hover:underline text-xs"
+                          >
+                            View ↗
+                          </a>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
       {!loading && predictions.length === 0 && (
         <div className="text-center py-16 text-gray-500">
           <p className="text-4xl mb-4">🔮</p>
-          <p>No predictions yet. Go make some calls!</p>
+          <p className="mb-2">No predictions yet — start predicting!</p>
+          <a href="/" className="text-seek-teal hover:underline text-sm">Browse Markets →</a>
         </div>
       )}
     </div>

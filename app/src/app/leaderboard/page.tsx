@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { fetchAllMarkets, OnChainMarket } from "@/lib/program";
 import { loadGamification, GamificationData } from "@/lib/gamification";
+import { LeaderboardSkeleton } from "@/components/Skeleton";
 
 interface PlatformStats {
   totalMarkets: number;
@@ -56,10 +57,7 @@ export default function LeaderboardPage() {
       </div>
 
       {loading ? (
-        <div className="text-center py-16">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-seek-purple mb-4"></div>
-          <p className="text-gray-400">Loading stats from Solana...</p>
-        </div>
+        <LeaderboardSkeleton />
       ) : (
         <>
           {/* Platform Stats */}

@@ -5,6 +5,8 @@ import { useParams } from "next/navigation";
 import { fetchMarket, OnChainMarket } from "@/lib/program";
 import { inferCategory } from "@/lib/constants";
 import { MarketCard } from "@/components/MarketCard";
+import { MarketComments } from "@/components/MarketComments";
+import { ShareModal } from "@/components/ShareModal";
 
 export default function MarketPage() {
   const params = useParams();
@@ -13,6 +15,7 @@ export default function MarketPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [shareCopied, setShareCopied] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   useEffect(() => {
     if (isNaN(id)) {
@@ -102,15 +105,21 @@ export default function MarketPage() {
         >
           {shareCopied ? "✅ Link Copied!" : "🔗 Copy Link"}
         </button>
-        <a
-          href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`What do you think? "${market.title}" — predict now on @Seek_Alpha_`)}&url=${encodeURIComponent(`https://seekalpha.bet/market/${market.id}`)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-1 py-2.5 rounded-lg bg-gray-800 border border-seek-border text-sm text-gray-400 hover:text-white hover:border-gray-600 transition text-center"
+        <button
+          onClick={() => setShowShareModal(true)}
+          className="flex-1 py-2.5 rounded-lg bg-gradient-to-r from-seek-purple/20 to-seek-teal/20 border border-seek-border text-sm text-gray-300 hover:text-white hover:border-seek-purple transition"
         >
-          𝕏 Share on X
-        </a>
+          📢 Share
+        </button>
       </div>
+
+      {/* Share Modal */}
+      <ShareModal
+        show={showShareModal}
+        marketId={market.id}
+        marketTitle={market.title}
+        onClose={() => setShowShareModal(false)}
+      />
 
       {/* Recent Activity */}
       <div className="mt-6 bg-seek-card border border-seek-border rounded-xl p-5">
@@ -170,6 +179,9 @@ export default function MarketPage() {
           </a>
         </div>
       </div>
+
+      {/* Comments / Discussion */}
+      <MarketComments marketId={market.id} />
     </div>
   );
 }

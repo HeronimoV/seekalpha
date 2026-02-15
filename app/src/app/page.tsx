@@ -3,6 +3,13 @@
 import { Hero } from "@/components/Hero";
 import { MarketCard } from "@/components/MarketCard";
 import { NotificationBanners } from "@/components/NotificationBanners";
+import { ActivityFeed } from "@/components/ActivityFeed";
+import { Onboarding } from "@/components/Onboarding";
+import { MarketGridSkeleton } from "@/components/Skeleton";
+import { StatsBanner } from "@/components/StatsBanner";
+import { TrendingMarkets } from "@/components/TrendingMarkets";
+import { ClosingSoon } from "@/components/ClosingSoon";
+import { HowItWorks } from "@/components/HowItWorks";
 import { fetchAllMarkets, OnChainMarket } from "@/lib/program";
 import { inferCategory } from "@/lib/constants";
 import { useState, useEffect, useMemo } from "react";
@@ -99,6 +106,7 @@ export default function Home() {
 
   return (
     <>
+      <Onboarding />
       <Hero />
 
       {/* Search Bar */}
@@ -162,12 +170,7 @@ export default function Home() {
       </div>
 
       {/* Loading State */}
-      {loading && (
-        <div className="text-center py-16">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-seek-purple mb-4"></div>
-          <p className="text-gray-400">Loading markets from Solana...</p>
-        </div>
-      )}
+      {loading && <MarketGridSkeleton count={6} />}
 
       {/* Error State */}
       {error && (
@@ -185,6 +188,18 @@ export default function Home() {
 
       {/* Notification Banners */}
       {!loading && !error && <NotificationBanners markets={markets} />}
+
+      {/* Stats Banner */}
+      {!loading && !error && <StatsBanner markets={markets} />}
+
+      {/* Trending Markets */}
+      {!loading && !error && <TrendingMarkets markets={markets} />}
+
+      {/* Closing Soon */}
+      {!loading && !error && <ClosingSoon markets={markets} />}
+
+      {/* Activity Feed */}
+      {!loading && !error && <ActivityFeed />}
 
       {/* Active Markets */}
       {!loading && !error && processedMarkets.active.length > 0 && (
@@ -223,47 +238,7 @@ export default function Home() {
       )}
 
       {/* How it Works */}
-      {!loading && !error && (
-        <div className="mb-16 mt-8">
-          <h2 className="text-2xl font-bold text-center mb-8">How It Works</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-seek-card border border-seek-border rounded-xl p-6 text-center">
-              <div className="text-3xl mb-3">👛</div>
-              <h3 className="font-semibold mb-2">1. Connect Wallet</h3>
-              <p className="text-sm text-gray-400">
-                Connect your Phantom wallet. No sign-up, no KYC, no email. Just your Solana wallet.
-              </p>
-            </div>
-            <div className="bg-seek-card border border-seek-border rounded-xl p-6 text-center">
-              <div className="text-3xl mb-3">🔮</div>
-              <h3 className="font-semibold mb-2">2. Place Your Prediction</h3>
-              <p className="text-sm text-gray-400">
-                Pick a market, choose YES or NO, and stake SOL. Your prediction is recorded on-chain.
-              </p>
-            </div>
-            <div className="bg-seek-card border border-seek-border rounded-xl p-6 text-center">
-              <div className="text-3xl mb-3">💰</div>
-              <h3 className="font-semibold mb-2">3. Win & Collect</h3>
-              <p className="text-sm text-gray-400">
-                If you predicted correctly, claim your share of the pool. Only 3% fee — lowest in the game.
-              </p>
-            </div>
-          </div>
-
-          {/* Stats bar */}
-          <div className="flex flex-wrap items-center justify-center gap-6 mt-8 text-sm">
-            <div className="flex items-center gap-2 text-gray-400">
-              <span className="text-seek-teal font-bold">SOL-native</span> — no bridging
-            </div>
-            <div className="flex items-center gap-2 text-gray-400">
-              <span className="text-seek-purple font-bold">3% fee</span> — lowest available
-            </div>
-            <div className="flex items-center gap-2 text-gray-400">
-              <span className="text-green-400 font-bold">Open source</span> — fully transparent
-            </div>
-          </div>
-        </div>
-      )}
+      {!loading && !error && <HowItWorks />}
 
       {/* Community CTA */}
       {!loading && !error && (

@@ -78,16 +78,22 @@ export default function RootLayout({
                   </div>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-sm mb-3">Powered By</h4>
+                  <h4 className="font-semibold text-sm mb-3">Legal</h4>
                   <div className="space-y-2 text-sm text-gray-500">
-                    <a href="https://solana.com" target="_blank" className="block hover:text-white transition">Solana</a>
+                    <a href="/terms" className="block hover:text-white transition">Terms of Service</a>
+                    <a href="/privacy" className="block hover:text-white transition">Privacy Policy</a>
+                  </div>
+                  <h4 className="font-semibold text-sm mb-3 mt-4">Powered By</h4>
+                  <div className="space-y-2 text-sm text-gray-500">
+                    <a href="https://solana.com" target="_blank" className="block hover:text-white transition">◎ Solana</a>
                     <a href="https://solanamobile.com/seeker" target="_blank" className="block hover:text-white transition">Seeker</a>
                   </div>
                 </div>
               </div>
               <div className="text-center text-xs text-gray-600 pt-6 border-t border-seek-border">
-                <p>SeekAlpha © 2026 — Predict. Earn. Defy the Market.</p>
+                <p>SeekAlpha © {new Date().getFullYear()} — Predict. Earn. Defy the Market.</p>
                 <p className="mt-1">seekalpha.sol · seekalpha.bet</p>
+                <p className="mt-2 text-gray-700">Built with ❤️ on Solana ◎</p>
               </div>
             </div>
           </footer>
