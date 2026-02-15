@@ -22,7 +22,7 @@
 - Mobile-first design
 - AI-powered development (2 engineers worth of output from 1 person + AI)
 
-**What We're Asking:** $3,000–6,000 seed investment for audit, AI development, mainnet launch, and 6 months of operations.
+**What We're Asking:** $6,000–12,000 seed investment for audit, AI development, mainnet launch, and 6 months of operations.
 
 **Projected ROI:** Break-even at ~$5K daily volume. At $50K daily volume (0.1% of Polymarket), the platform generates ~$1,500/day in fees ($45K/month).
 
@@ -283,10 +283,10 @@
 | Vercel (frontend) | $0 | Free tier sufficient |
 | Domain renewal | ~$1.25 | Annual paid |
 | OpenClaw (AI dev) | Already running | Chito's existing setup |
-| Second OpenClaw bot (Opus) | $50-100/mo | Parallel dev — 2x build speed |
+| AI Development (2 Opus bots) | $600-1,200/mo | Two parallel AI devs — full engineering team |
 | Moderator | $0-200 | Depending on arrangement |
 | Solana RPC (mainnet) | $0-50 | Free tier → Helius/Triton |
-| **Total monthly** | **$65-365** | |
+| **Total monthly** | **$615-1,415** | |
 
 ### Revenue Projections
 
@@ -300,39 +300,43 @@ Based on 3% fee on winning payouts:
 | $100,000 | $3,000 | $2,600-2,900 |
 | $500,000 | $15,000 | $14,600-14,900 |
 
-**Break-even point:** ~$5,000/month in volume (~$165/day)
-This is achievable with ~50 active users betting an average of $3.30/day.
+**Break-even point (ops only):** ~$20,000-45,000/month in volume ($600-1,400/day)
+This covers monthly operating costs including AI development. Achievable with ~200 active users betting ~$5/day.
 
-### Funding Request: $3,000-6,000
+**Break-even point (total investment recovery):** At $50K monthly volume, the full $10K investment is recovered within ~7-8 months of mainnet launch.
+
+### Funding Request: $6,000-12,000
 
 | Allocation | Amount | Purpose |
 |-----------|--------|---------|
 | Smart contract audit | $1,500-3,000 | Security verification before mainnet |
 | LLC + Legal | $400-700 | Business entity + Terms of Service |
 | Treasury SOL | $500-1,000 | Mainnet operations + seed liquidity |
-| 2nd AI Developer (6 months) | $300-600 | Second Opus-class AI running in parallel — doubles dev speed |
+| AI Development (2 bots, 6 months) | $3,600-7,200 | Two Opus-class AI developers running in parallel — equivalent of a full engineering team |
 | Marketing budget | $200-500 | First KOL partnerships + contests |
 | Buffer | $200-500 | Unexpected costs |
-| **Total** | **$3,100-6,300** | |
+| **Total** | **$6,400-12,900** | |
 
-> **Note on AI Development Costs:** Our entire engineering team runs on two AI developer instances at ~$50-100/month each. A traditional startup would spend $10,000-20,000/month on a single senior developer. This is our unfair advantage — venture-grade engineering output at indie-hacker prices.
+> **Note on AI Development Costs:** Our entire engineering team runs on two AI developer instances at ~$300-600/month each ($600-1,200/mo total). A traditional startup would spend $15,000-30,000/month on two senior developers for the same output. **We operate at ~4% of traditional engineering costs.** This is our unfair advantage.
 
 ### Return on Investment
 
 **Conservative scenario** (reaching $50K monthly volume by Month 6):
 - Monthly revenue: $1,500
 - Annual projected: $18,000
-- ROI on $5K investment: **260% in year 1**
+- ROI on $10K investment: **80% in year 1**
 
 **Moderate scenario** (reaching $100K monthly volume by Month 6):
 - Monthly revenue: $3,000
 - Annual projected: $36,000
-- ROI on $5K investment: **620% in year 1**
+- ROI on $10K investment: **260% in year 1**
 
 **Bull scenario** (reaching $500K monthly volume — small fraction of Polymarket):
 - Monthly revenue: $15,000
 - Annual projected: $180,000
-- ROI on $5K investment: **3,500% in year 1**
+- ROI on $10K investment: **1,700% in year 1**
+
+*Note: As revenue grows, AI costs stay flat — margins improve dramatically at scale.*
 
 ---
 
@@ -420,7 +424,7 @@ All milestones are **on-chain verifiable** — no trusting spreadsheets, the blo
 
 ## The Ask
 
-**$3,000-6,000 seed investment** to cover audit, legal, AI development, and launch costs.
+**$6,000-12,000 seed investment** to cover AI development, audit, legal, and launch costs.
 
 **What investors get:**
 - Equity stake in the LLC (percentage negotiable based on investment amount)
