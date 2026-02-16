@@ -1,6 +1,7 @@
 "use client";
 
 import { FC, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { Confetti } from "./Confetti";
 
 interface BetSuccessProps {
@@ -41,7 +42,9 @@ export const BetSuccess: FC<BetSuccessProps> = ({
 
   const isWin = variant === "win";
 
-  return (
+  if (typeof window === "undefined") return null;
+
+  return createPortal(
     <>
       <Confetti active={show} variant={variant} />
 
@@ -152,6 +155,7 @@ export const BetSuccess: FC<BetSuccessProps> = ({
           </button>
         </div>
       </div>
-    </>
+    </>,
+    document.body
   );
 };
