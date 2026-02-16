@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { WalletProvider } from "@/components/WalletProvider";
 import { ToastProvider } from "@/components/Toast";
 import { Navbar } from "@/components/Navbar";
+import { InstallPrompt } from "@/components/InstallPrompt";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -32,11 +33,12 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#9333EA" />
+        <meta name="theme-color" content="#7c3aed" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="SeekAlpha" />
-        <link rel="apple-touch-icon" href="/logo.jpg" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <link rel="apple-touch-icon" href="/icon-192.png" />
         <script dangerouslySetInnerHTML={{ __html: `
           if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -50,6 +52,7 @@ export default function RootLayout({
           <ToastProvider>
           <Navbar />
           <main className="max-w-6xl mx-auto px-4">{children}</main>
+          <InstallPrompt />
           <footer className="border-t border-seek-border mt-16 py-10 px-4">
             <div className="max-w-6xl mx-auto">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
