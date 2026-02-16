@@ -62,20 +62,20 @@ export default function LeaderboardPage() {
         <>
           {/* Platform Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-            <div className="bg-seek-card border border-seek-border rounded-xl p-5 text-center">
-              <div className="text-3xl font-bold text-white">{stats?.totalMarkets || 0}</div>
+            <div className="bg-seek-card border border-seek-border rounded-xl p-5 text-center card-glow animate-slide-up stagger-1">
+              <div className="text-3xl font-bold text-white animate-count">{stats?.totalMarkets || 0}</div>
               <div className="text-sm text-gray-400 mt-1">Total Markets</div>
             </div>
-            <div className="bg-seek-card border border-seek-border rounded-xl p-5 text-center">
-              <div className="text-3xl font-bold text-seek-teal">{stats?.activeMarkets || 0}</div>
+            <div className="bg-seek-card border border-seek-border rounded-xl p-5 text-center card-glow animate-slide-up stagger-2">
+              <div className="text-3xl font-bold text-seek-teal animate-count">{stats?.activeMarkets || 0}</div>
               <div className="text-sm text-gray-400 mt-1">Active Markets</div>
             </div>
-            <div className="bg-seek-card border border-seek-border rounded-xl p-5 text-center">
-              <div className="text-3xl font-bold text-seek-purple">{stats?.totalVolume.toFixed(2) || "0"}</div>
+            <div className="bg-seek-card border border-seek-border rounded-xl p-5 text-center card-glow animate-slide-up stagger-3">
+              <div className="text-3xl font-bold text-seek-purple animate-count">{stats?.totalVolume.toFixed(2) || "0"}</div>
               <div className="text-sm text-gray-400 mt-1">Total Volume (SOL)</div>
             </div>
-            <div className="bg-seek-card border border-seek-border rounded-xl p-5 text-center">
-              <div className="text-3xl font-bold text-green-400">{stats?.totalPredictions || 0}</div>
+            <div className="bg-seek-card border border-seek-border rounded-xl p-5 text-center card-glow animate-slide-up stagger-4">
+              <div className="text-3xl font-bold text-green-400 animate-count">{stats?.totalPredictions || 0}</div>
               <div className="text-sm text-gray-400 mt-1">Predictions Made</div>
             </div>
           </div>
@@ -121,8 +121,11 @@ export default function LeaderboardPage() {
 
           {/* Your Stats */}
           {gamification ? (
-            <div className="bg-seek-card border border-seek-border rounded-xl p-6 mb-8">
-              <h2 className="text-xl font-semibold mb-4">🏅 Your Stats</h2>
+            <div className="bg-gradient-to-r from-seek-purple/5 to-seek-teal/5 border border-seek-teal/30 rounded-xl p-6 mb-8 animate-fade-in">
+              <div className="flex items-center gap-2 mb-4">
+                <h2 className="text-xl font-semibold">🏅 Your Stats</h2>
+                <span className="text-xs px-2 py-0.5 rounded-full bg-seek-teal/20 text-seek-teal font-medium">Connected</span>
+              </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-amber-400">🔥 {gamification.streak}</div>

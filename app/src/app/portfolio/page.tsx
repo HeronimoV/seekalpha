@@ -155,21 +155,70 @@ export default function PortfolioPage() {
         {publicKey?.toString().slice(0, 4)}...{publicKey?.toString().slice(-4)} · Track your predictions and claim winnings
       </p>
 
+      {/* P&L Summary */}
+      <div className="bg-gradient-to-r from-seek-purple/10 to-seek-teal/10 border border-seek-border rounded-xl p-6 mb-6 animate-fade-in">
+        <h2 className="text-sm font-medium text-gray-400 mb-4">Portfolio Summary</h2>
+        <div className="grid grid-cols-3 gap-6 text-center">
+          <div>
+            <div className="text-xs text-gray-500 mb-1">Total Wagered</div>
+            <div className="text-2xl font-bold text-white animate-count">{totalStaked.toFixed(3)} SOL</div>
+          </div>
+          <div>
+            <div className="text-xs text-gray-500 mb-1">Markets Won</div>
+            <div className="text-2xl font-bold text-green-400 animate-count">{wonPredictions.length}</div>
+          </div>
+          <div>
+            <div className="text-xs text-gray-500 mb-1">Win Rate</div>
+            <div className="text-2xl font-bold text-seek-purple animate-count">
+              {predictions.length > 0 ? `${winRate.toFixed(0)}%` : "—"}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Bet Distribution */}
+      {predictions.length > 0 && (
+        <div className="bg-seek-card border border-seek-border rounded-xl p-5 mb-6 animate-slide-up">
+          <h3 className="text-sm font-medium text-gray-400 mb-3">Bet Distribution</h3>
+          <div className="flex items-center gap-4">
+            <div className="flex-1">
+              {(() => {
+                const yesBets = predictions.filter(p => p.position).length;
+                const noBets = predictions.filter(p => !p.position).length;
+                const total = yesBets + noBets;
+                const yesPct = total > 0 ? (yesBets / total) * 100 : 50;
+                return (
+                  <>
+                    <div className="flex justify-between text-xs mb-2">
+                      <span className="text-seek-teal font-medium">YES ({yesBets})</span>
+                      <span className="text-red-400 font-medium">NO ({noBets})</span>
+                    </div>
+                    <div className="w-full h-3 bg-red-400/30 rounded-full overflow-hidden">
+                      <div className="h-full bg-seek-teal rounded-full transition-all" style={{ width: `${yesPct}%` }} />
+                    </div>
+                  </>
+                );
+              })()}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-        <div className="bg-seek-card border border-seek-border rounded-xl p-4">
+        <div className="bg-seek-card border border-seek-border rounded-xl p-4 card-glow animate-slide-up stagger-1">
           <div className="text-sm text-gray-400 mb-1">Active</div>
           <div className="text-2xl font-bold text-white">{activePredictions.length}</div>
         </div>
-        <div className="bg-seek-card border border-seek-border rounded-xl p-4">
+        <div className="bg-seek-card border border-seek-border rounded-xl p-4 card-glow animate-slide-up stagger-2">
           <div className="text-sm text-gray-400 mb-1">Total Staked</div>
           <div className="text-2xl font-bold text-seek-teal">{totalStaked.toFixed(2)} SOL</div>
         </div>
-        <div className="bg-seek-card border border-seek-border rounded-xl p-4">
+        <div className="bg-seek-card border border-seek-border rounded-xl p-4 card-glow animate-slide-up stagger-3">
           <div className="text-sm text-gray-400 mb-1">Won</div>
           <div className="text-2xl font-bold text-green-400">{wonPredictions.length}</div>
         </div>
-        <div className="bg-seek-card border border-seek-border rounded-xl p-4">
+        <div className="bg-seek-card border border-seek-border rounded-xl p-4 card-glow animate-slide-up stagger-4">
           <div className="text-sm text-gray-400 mb-1">Win Rate</div>
           <div className="text-2xl font-bold text-seek-purple">
             {predictions.length > 0 ? `${winRate.toFixed(0)}%` : "—"}
@@ -226,7 +275,9 @@ export default function PortfolioPage() {
               return (
                 <div
                   key={pred.market.id}
-                  className="bg-seek-card border border-seek-border rounded-xl p-5 flex items-center justify-between"
+                  className={`bg-seek-card border border-seek-border rounded-xl p-5 flex items-center justify-between transition ${
+                    isWin ? "glow-green" : isLoss ? "glow-red" : ""
+                  }`}
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">

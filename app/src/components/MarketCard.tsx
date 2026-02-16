@@ -123,6 +123,8 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
         // Calculate payout for display
         const payout = payouts ? (position ? payouts.yes.payout : payouts.no.payout) : amount;
         setLastBet({ position, amount, payout, sig: signature });
+        setShowInlineSuccess(true);
+        setTimeout(() => setShowInlineSuccess(false), 1500);
         setShowSuccess(true);
         setTxStatus(null);
         setBetAmount("");
@@ -145,21 +147,35 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
     [publicKey, connected, signTransaction, signAllTransactions, betAmount, market.id, connection]
   );
 
+  const [showInlineSuccess, setShowInlineSuccess] = useState(false);
   const isExpired = market.resolutionTime.getTime() < Date.now();
   const isFlash = market.marketType === "flash1h" || market.marketType === "flash24h";
+  const isHot = totalPool > 0.05;
+
+  // Determine winning side for gradient border
+  const borderClass = isFlash
+    ? "border border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.08)]"
+    : totalPool === 0
+    ? "gradient-border gradient-border-even"
+    : yesPercent > 55
+    ? "gradient-border gradient-border-yes"
+    : noPercent > 55
+    ? "gradient-border gradient-border-no"
+    : "gradient-border gradient-border-even";
 
   return (
-    <div className={`rounded-xl bg-seek-card p-4 md:p-5 hover:bg-seek-card/80 transition ${
-      isFlash
-        ? "border border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.08)]"
-        : "gradient-border"
-    }`}>
-      {/* Category + Time + Flash Badge */}
+    <div className={`rounded-xl bg-seek-card p-4 md:p-5 transition card-glow shimmer-hover ${borderClass} ${showInlineSuccess ? "animate-success-flash" : ""}`}>
+      {/* Category + Time + Flash Badge + Hot */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <span className="text-xs px-2 py-0.5 rounded-full bg-seek-teal/20 text-seek-teal">
             {market.category}
           </span>
+          {isHot && (
+            <span className="text-xs px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-400 font-medium">
+              <span className="animate-flame">🔥</span> Hot
+            </span>
+          )}
           {isFlash && (
             <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-medium">
               ⚡ Flash {market.marketType === "flash1h" ? "1H" : "24H"}
@@ -242,6 +258,7 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
               step="0.01"
               disabled={loading}
             />
+            <p className="text-xs text-gray-600 mt-1 ml-1">Max: 0.01 SOL per prediction</p>
           </div>
 
           {/* Quick amounts */}
@@ -297,14 +314,14 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
             <button
               onClick={() => placeBet(true)}
               disabled={loading}
-              className="flex-1 py-2.5 rounded-lg btn-yes text-white font-medium text-sm transition disabled:opacity-50"
+              className="flex-1 py-2.5 rounded-lg btn-yes text-white font-medium text-sm transition disabled:opacity-50 ripple btn-press"
             >
               {loading ? "..." : `🟢 YES${payouts ? ` (${payouts.yes.multiplier.toFixed(2)}x)` : ""}`}
             </button>
             <button
               onClick={() => placeBet(false)}
               disabled={loading}
-              className="flex-1 py-2.5 rounded-lg btn-no text-white font-medium text-sm transition disabled:opacity-50"
+              className="flex-1 py-2.5 rounded-lg btn-no text-white font-medium text-sm transition disabled:opacity-50 ripple btn-press"
             >
               {loading ? "..." : `🔴 NO${payouts ? ` (${payouts.no.multiplier.toFixed(2)}x)` : ""}`}
             </button>

@@ -39,26 +39,26 @@ export const Navbar: FC = () => {
           <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-seek-purple to-seek-teal bg-clip-text text-transparent">
             SeekAlpha
           </span>
-          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 hidden sm:inline">
-            BETA
+          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-seek-teal/20 text-seek-teal border border-seek-teal/30 hidden sm:inline font-semibold">
+            MAINNET
           </span>
         </a>
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-6">
-          <a href="/" className="text-sm text-gray-400 hover:text-white transition">
+          <a href="/" className="text-sm text-gray-400 hover:text-white transition nav-glow">
             Markets
           </a>
-          <a href="/portfolio" className="text-sm text-gray-400 hover:text-white transition">
+          <a href="/portfolio" className="text-sm text-gray-400 hover:text-white transition nav-glow">
             Portfolio
           </a>
-          <a href="/leaderboard" className="text-sm text-gray-400 hover:text-white transition">
+          <a href="/leaderboard" className="text-sm text-gray-400 hover:text-white transition nav-glow">
             Leaderboard
           </a>
-          <a href="/propose" className="text-sm text-gray-400 hover:text-white transition">
+          <a href="/propose" className="text-sm text-gray-400 hover:text-white transition nav-glow">
             Propose
           </a>
-          <a href="/about" className="text-sm text-gray-400 hover:text-white transition">
+          <a href="/about" className="text-sm text-gray-400 hover:text-white transition nav-glow">
             About
           </a>
           {connected && balance !== null && (

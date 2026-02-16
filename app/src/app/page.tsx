@@ -12,6 +12,7 @@ import { ClosingSoon } from "@/components/ClosingSoon";
 import { HowItWorks } from "@/components/HowItWorks";
 import { fetchAllMarkets, OnChainMarket } from "@/lib/program";
 import { inferCategory } from "@/lib/constants";
+import { SocialProof } from "@/components/SocialProof";
 import { useState, useEffect, useMemo } from "react";
 
 const CATEGORIES = ["All", "Crypto", "Tech", "DeFi", "Sports", "Politics", "Memes", "Culture"];
@@ -209,8 +210,10 @@ export default function Home() {
             <h2 className="text-lg font-semibold">Active Markets ({processedMarkets.active.length})</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-            {processedMarkets.active.map((market) => (
-              <MarketCard key={market.id} market={market} />
+            {processedMarkets.active.map((market, i) => (
+              <div key={market.id} className={`animate-slide-up stagger-${Math.min(i + 1, 8)}`}>
+                <MarketCard market={market} />
+              </div>
             ))}
           </div>
         </>
@@ -223,8 +226,10 @@ export default function Home() {
             <h2 className="text-lg font-semibold text-gray-500">Resolved Markets ({processedMarkets.resolved.length})</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 opacity-60">
-            {processedMarkets.resolved.map((market) => (
-              <MarketCard key={market.id} market={market} />
+            {processedMarkets.resolved.map((market, i) => (
+              <div key={market.id} className={`animate-slide-up stagger-${Math.min(i + 1, 8)}`}>
+                <MarketCard market={market} />
+              </div>
             ))}
           </div>
         </>
@@ -236,6 +241,9 @@ export default function Home() {
           <p>{searchQuery ? "No markets match your search." : "No markets in this category yet. Check back soon!"}</p>
         </div>
       )}
+
+      {/* Social Proof */}
+      {!loading && !error && <SocialProof />}
 
       {/* How it Works */}
       {!loading && !error && <HowItWorks />}
@@ -277,8 +285,8 @@ export default function Home() {
       {/* On-chain badge */}
       {!loading && !error && markets.length > 0 && (
         <div className="text-center mb-8">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-seek-teal/10 border border-seek-teal/20 text-seek-teal text-xs">
-            ⛓️ {markets.length} markets live on Solana
+          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-seek-teal/10 border border-seek-teal/20 text-seek-teal text-xs animate-fade-in">
+            ⛓️ {markets.length} markets live on Solana Mainnet
           </span>
         </div>
       )}

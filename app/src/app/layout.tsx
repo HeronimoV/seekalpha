@@ -3,6 +3,7 @@ import { WalletProvider } from "@/components/WalletProvider";
 import { ToastProvider } from "@/components/Toast";
 import { Navbar } from "@/components/Navbar";
 import { InstallPrompt } from "@/components/InstallPrompt";
+import { MainnetBanner } from "@/components/MainnetBanner";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -50,6 +51,7 @@ export default function RootLayout({
       <body className="min-h-screen">
         <WalletProvider>
           <ToastProvider>
+          <MainnetBanner />
           <Navbar />
           <main className="max-w-6xl mx-auto px-4">{children}</main>
           <InstallPrompt />
