@@ -61,6 +61,14 @@ export const Navbar: FC = () => {
           <a href="/about" className="text-sm text-gray-400 hover:text-white transition">
             About
           </a>
+          <a
+            href="https://faucet.quicknode.com/solana/devnet"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs px-2.5 py-1 rounded-full bg-seek-teal/10 text-seek-teal border border-seek-teal/30 hover:bg-seek-teal/20 transition font-medium"
+          >
+            Get SOL 🪂
+          </a>
           {connected && balance !== null && (
             <span className="text-sm text-seek-teal font-medium">
               {balance.toFixed(2)} SOL
@@ -112,6 +120,15 @@ export const Navbar: FC = () => {
           </a>
           <a href="/faq" className="block py-2 text-sm text-gray-400 hover:text-white" onClick={() => setMenuOpen(false)}>
             ❓ FAQ
+          </a>
+          <a
+            href="https://faucet.quicknode.com/solana/devnet"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block py-2 text-sm text-seek-teal hover:text-seek-teal/80"
+            onClick={() => setMenuOpen(false)}
+          >
+            🪂 Get Free SOL
           </a>
         </div>
       )}

@@ -4,7 +4,7 @@ import { FC, useState, useEffect } from "react";
 
 const STORAGE_KEY = "seekalpha-onboarding-complete";
 
-const steps = [
+const steps: { emoji: string; title: string; description: string; link?: { url: string; label: string }; note?: string }[] = [
   {
     emoji: "🔮",
     title: "Welcome to SeekAlpha!",
@@ -23,7 +23,8 @@ const steps = [
     title: "Get Devnet SOL",
     description:
       "SeekAlpha is currently on Solana Devnet. Get free test SOL from the faucet — it's not real money, so experiment freely!",
-    link: { url: "https://faucet.solana.com", label: "Get Free Devnet SOL →" },
+    link: { url: "https://faucet.quicknode.com/solana/devnet", label: "Get Free Devnet SOL →" },
+    note: "No GitHub login required — just paste your wallet address and click!",
   },
   {
     emoji: "🎯",
@@ -85,6 +86,9 @@ export const Onboarding: FC = () => {
             >
               {current.link.label}
             </a>
+          )}
+          {current.note && (
+            <p className="mt-2 text-xs text-gray-500 italic">{current.note}</p>
           )}
         </div>
 

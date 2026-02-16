@@ -16,7 +16,7 @@ const FAQS: FAQItem[] = [
   {
     question: "How do I get started?",
     answer:
-      "1. Install the Phantom wallet (phantom.app)\n2. Fund your wallet with SOL\n3. Visit seekalpha.bet and click 'Select Wallet' to connect\n4. Browse markets, pick one, and place your prediction!\n\nWe're currently on Devnet, so you can test with free devnet SOL from faucet.solana.com.",
+      "1. Install the Phantom wallet (phantom.app)\n2. Fund your wallet with SOL\n3. Visit seekalpha.bet and click 'Select Wallet' to connect\n4. Browse markets, pick one, and place your prediction!\n\nWe're currently on Devnet, so you can test with free devnet SOL from faucet.quicknode.com/solana/devnet.",
   },
   {
     question: "How does betting work?",

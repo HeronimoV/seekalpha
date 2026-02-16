@@ -109,6 +109,25 @@ export default function Home() {
       <Onboarding />
       <Hero />
 
+      {/* Devnet Faucet CTA */}
+      <a
+        href="https://faucet.quicknode.com/solana/devnet"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block mb-6 p-4 rounded-xl bg-gradient-to-r from-seek-purple/5 to-seek-teal/5 border border-transparent bg-clip-padding relative group hover:scale-[1.01] transition-transform"
+        style={{
+          backgroundImage: "linear-gradient(var(--seek-dark, #0d0d0d), var(--seek-dark, #0d0d0d)), linear-gradient(to right, #7c3aed, #2dd4bf)",
+          backgroundOrigin: "border-box",
+          backgroundClip: "padding-box, border-box",
+          borderWidth: "1.5px",
+        }}
+      >
+        <div className="text-center">
+          <span className="text-lg font-bold">🪂 Get Free Devnet SOL</span>
+          <p className="text-xs text-gray-400 mt-1">Need test SOL? Get it free in seconds — no login required</p>
+        </div>
+      </a>
+
       {/* Search Bar */}
       <div className="mb-4">
         <input
