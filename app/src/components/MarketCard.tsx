@@ -246,7 +246,7 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
 
           {/* Quick amounts */}
           <div className="flex gap-2">
-            {[0.1, 0.5, 1, 5].map((amt) => (
+            {[0.001, 0.005, 0.01].map((amt) => (
               <button
                 key={amt}
                 onClick={() => setBetAmount(amt.toString())}
