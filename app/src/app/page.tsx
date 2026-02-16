@@ -111,7 +111,7 @@ export default function Home() {
 
       {/* Devnet Faucet CTA */}
       <a
-        href="https://faucet.quicknode.com/solana/devnet"
+        href="https://solfaucet.com"
         target="_blank"
         rel="noopener noreferrer"
         className="block mb-6 p-4 rounded-xl bg-gradient-to-r from-seek-purple/5 to-seek-teal/5 border border-transparent bg-clip-padding relative group hover:scale-[1.01] transition-transform"
