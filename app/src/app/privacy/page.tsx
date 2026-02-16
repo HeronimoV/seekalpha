@@ -61,7 +61,7 @@ export default function PrivacyPage() {
           <h2 className="text-lg font-semibold text-white mb-2">Third-Party Services</h2>
           <ul className="list-disc pl-5 space-y-2">
             <li>
-              <strong className="text-white">Solana RPC Nodes</strong> — We connect to Solana&apos;s devnet RPC to read and write blockchain data. RPC providers may log standard connection metadata.
+              <strong className="text-white">Solana RPC Nodes</strong> — We connect to Solana&apos;s mainnet RPC to read and write blockchain data. RPC providers may log standard connection metadata.
             </li>
             <li>
               <strong className="text-white">Vercel</strong> — Our hosting provider. Standard web server logs may be collected by Vercel per their privacy policy.

@@ -170,7 +170,7 @@ export default function MarketPage() {
         <div>
           <div className="text-gray-500 text-xs mb-1">On-Chain Address</div>
           <a
-            href={`https://explorer.solana.com/address/${market.pda}?cluster=devnet`}
+            href={`https://explorer.solana.com/address/${market.pda}`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-seek-teal text-xs hover:underline font-mono break-all"

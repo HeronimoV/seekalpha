@@ -19,12 +19,11 @@ const steps: { emoji: string; title: string; description: string; link?: { url: 
     link: { url: "https://phantom.app", label: "Download Phantom →" },
   },
   {
-    emoji: "💧",
-    title: "Get Devnet SOL",
+    emoji: "💰",
+    title: "Fund Your Wallet",
     description:
-      "SeekAlpha is currently on Solana Devnet. Get free test SOL from the faucet — it's not real money, so experiment freely!",
-    link: { url: "https://faucet.solana.com", label: "Get Free Devnet SOL →" },
-    note: "No GitHub login required — just paste your wallet address and click!",
+      "SeekAlpha is live on Solana mainnet! You need real SOL in your Phantom wallet. Max bet is 0.01 SOL during our soft launch.",
+    link: { url: "https://phantom.app", label: "Get Phantom →" },
   },
   {
     emoji: "🎯",

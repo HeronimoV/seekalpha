@@ -321,7 +321,7 @@ export default function PortfolioPage() {
                         </td>
                         <td className="px-4 py-3">
                           <a
-                            href={`https://explorer.solana.com/address/${pred.market.pda}?cluster=devnet`}
+                            href={`https://explorer.solana.com/address/${pred.market.pda}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-seek-teal hover:underline text-xs"

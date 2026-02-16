@@ -1,5 +1,5 @@
-export const PROGRAM_ID_STR = "9URCH6UhsMmgwX9xr2L84fimrGjpH8r3xheaSaZ21qGb";
-export const RPC_ENDPOINT = "https://api.devnet.solana.com";
+export const PROGRAM_ID_STR = "4occZKXYz3tXjNQYr58YhAwWsCKsP2yZaYdSgQtgMY3a";
+export const RPC_ENDPOINT = "https://api.mainnet-beta.solana.com";
 export const PLATFORM_FEE_BPS = 300; // 3%
 export const EXPLORER_BASE = "https://explorer.solana.com";
 

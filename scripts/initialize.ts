@@ -16,7 +16,7 @@ const walletKeypair = Keypair.fromSecretKey(
   )
 );
 
-const connection = new Connection("https://api.devnet.solana.com", "confirmed");
+const connection = new Connection("https://api.mainnet-beta.solana.com", "confirmed");
 const wallet = new anchor.Wallet(walletKeypair);
 const provider = new anchor.AnchorProvider(connection, wallet, {
   commitment: "confirmed",
@@ -31,7 +31,7 @@ const idl = JSON.parse(
   )
 );
 
-const PROGRAM_ID = new PublicKey("9URCH6UhsMmgwX9xr2L84fimrGjpH8r3xheaSaZ21qGb");
+const PROGRAM_ID = new PublicKey("4occZKXYz3tXjNQYr58YhAwWsCKsP2yZaYdSgQtgMY3a");
 const program = new Program(idl, provider);
 
 async function main() {

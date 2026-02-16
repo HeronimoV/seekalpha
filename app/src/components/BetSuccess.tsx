@@ -117,7 +117,7 @@ export const BetSuccess: FC<BetSuccessProps> = ({
 
           {/* TX Link */}
           <a
-            href={`https://explorer.solana.com/tx/${txSignature}?cluster=devnet`}
+            href={`https://explorer.solana.com/tx/${txSignature}`}
             target="_blank"
             rel="noopener noreferrer"
             className="block text-center text-xs text-white/50 hover:text-white/80 transition mb-4"

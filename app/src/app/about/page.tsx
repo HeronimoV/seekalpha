@@ -112,9 +112,20 @@ export default function AboutPage() {
                 <div className="w-0.5 h-full bg-seek-border"></div>
               </div>
               <div className="pb-6">
-                <div className="text-sm text-seek-teal font-medium">Phase 1 — Now</div>
-                <h3 className="font-semibold">Launch MVP on Devnet</h3>
+                <div className="text-sm text-seek-teal font-medium">Phase 1 ✅</div>
+                <h3 className="font-semibold">Launch MVP on Devnet ✅</h3>
                 <p className="text-sm text-gray-400">Core prediction market, wallet integration, curated markets.</p>
+              </div>
+            </div>
+            <div className="flex gap-4">
+              <div className="flex flex-col items-center">
+                <div className="w-3 h-3 rounded-full bg-seek-teal"></div>
+                <div className="w-0.5 h-full bg-seek-border"></div>
+              </div>
+              <div className="pb-6">
+                <div className="text-sm text-seek-teal font-medium">Phase 2 — Mainnet Soft Launch ✅</div>
+                <h3 className="font-semibold">Live on Mainnet!</h3>
+                <p className="text-sm text-gray-400">Deployed to Solana mainnet with 0.01 SOL max bet. Real SOL, real predictions. Soft launch for safety.</p>
               </div>
             </div>
             <div className="flex gap-4">
@@ -123,9 +134,9 @@ export default function AboutPage() {
                 <div className="w-0.5 h-full bg-seek-border"></div>
               </div>
               <div className="pb-6">
-                <div className="text-sm text-seek-purple font-medium">Phase 2 — Q1 2026</div>
-                <h3 className="font-semibold">Mainnet Launch + dApp Store</h3>
-                <p className="text-sm text-gray-400">Deploy smart contract to mainnet, submit to Seeker dApp Store, real SOL markets.</p>
+                <div className="text-sm text-seek-purple font-medium">Phase 3 — Q1 2026</div>
+                <h3 className="font-semibold">Full Launch + dApp Store</h3>
+                <p className="text-sm text-gray-400">Raise bet limits, submit to Seeker dApp Store, grow the community.</p>
               </div>
             </div>
             <div className="flex gap-4">
@@ -134,7 +145,7 @@ export default function AboutPage() {
                 <div className="w-0.5 h-full bg-seek-border"></div>
               </div>
               <div className="pb-6">
-                <div className="text-sm text-gray-500 font-medium">Phase 3 — Q2 2026</div>
+                <div className="text-sm text-gray-500 font-medium">Phase 4 — Q2 2026</div>
                 <h3 className="font-semibold">User-Created Markets + Oracles</h3>
                 <p className="text-sm text-gray-400">Anyone can create markets, automated resolution via Pyth/Switchboard oracles.</p>
               </div>
@@ -144,7 +155,7 @@ export default function AboutPage() {
                 <div className="w-3 h-3 rounded-full bg-gray-600"></div>
               </div>
               <div>
-                <div className="text-sm text-gray-500 font-medium">Phase 4 — Q3 2026</div>
+                <div className="text-sm text-gray-500 font-medium">Phase 5 — Q3 2026</div>
                 <h3 className="font-semibold">Social + Tournaments</h3>
                 <p className="text-sm text-gray-400">Leaderboards, prediction tournaments, social features, mobile push notifications.</p>
               </div>

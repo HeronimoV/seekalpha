@@ -3,16 +3,19 @@ seeds = false
 skip-lint = false
 
 [programs.localnet]
-seekalpha = "9URCH6UhsMmgwX9xr2L84fimrGjpH8r3xheaSaZ21qGb"
+seekalpha = "4occZKXYz3tXjNQYr58YhAwWsCKsP2yZaYdSgQtgMY3a"
 
 [programs.devnet]
-seekalpha = "9URCH6UhsMmgwX9xr2L84fimrGjpH8r3xheaSaZ21qGb"
+seekalpha = "4occZKXYz3tXjNQYr58YhAwWsCKsP2yZaYdSgQtgMY3a"
+
+[programs.mainnet]
+seekalpha = "4occZKXYz3tXjNQYr58YhAwWsCKsP2yZaYdSgQtgMY3a"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "devnet"
+cluster = "mainnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]

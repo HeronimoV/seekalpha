@@ -75,7 +75,7 @@ export const ToastProvider: FC<{ children: ReactNode }> = ({ children }) => {
               <p className="text-sm text-white">{toast.message}</p>
               {toast.txSignature && (
                 <a
-                  href={`https://explorer.solana.com/tx/${toast.txSignature}?cluster=devnet`}
+                  href={`https://explorer.solana.com/tx/${toast.txSignature}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-xs text-seek-teal hover:underline mt-1 block"

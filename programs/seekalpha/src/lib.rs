@@ -1,8 +1,9 @@
 use anchor_lang::prelude::*;
 
-declare_id!("9URCH6UhsMmgwX9xr2L84fimrGjpH8r3xheaSaZ21qGb");
+declare_id!("4occZKXYz3tXjNQYr58YhAwWsCKsP2yZaYdSgQtgMY3a");
 
 pub const PLATFORM_FEE_BPS: u16 = 300; // 3%
+pub const MAX_BET_LAMPORTS: u64 = 10_000_000; // 0.01 SOL = 10,000,000 lamports
 pub const FLASH_1H_DURATION: i64 = 3600; // 1 hour in seconds
 pub const FLASH_24H_DURATION: i64 = 86400; // 24 hours in seconds
 
@@ -108,6 +109,7 @@ pub mod seekalpha {
         position: bool, // true = YES, false = NO
     ) -> Result<()> {
         require!(amount > 0, SeekAlphaError::ZeroAmount);
+        require!(amount <= MAX_BET_LAMPORTS, SeekAlphaError::BetTooLarge);
 
         let market = &mut ctx.accounts.market;
         let clock = Clock::get()?;
@@ -458,4 +460,6 @@ pub enum SeekAlphaError {
     PositionMismatch,
     #[msg("Not a flash market")]
     NotFlashMarket,
+    #[msg("Bet exceeds maximum (0.01 SOL during soft launch)")]
+    BetTooLarge,
 }

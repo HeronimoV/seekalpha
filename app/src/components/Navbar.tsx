@@ -39,8 +39,8 @@ export const Navbar: FC = () => {
           <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-seek-purple to-seek-teal bg-clip-text text-transparent">
             SeekAlpha
           </span>
-          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-seek-purple/20 text-seek-purple border border-seek-purple/30 hidden sm:inline">
-            DEVNET
+          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 hidden sm:inline">
+            BETA
           </span>
         </a>
 
@@ -60,14 +60,6 @@ export const Navbar: FC = () => {
           </a>
           <a href="/about" className="text-sm text-gray-400 hover:text-white transition">
             About
-          </a>
-          <a
-            href="https://faucet.solana.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs px-2.5 py-1 rounded-full bg-seek-teal/10 text-seek-teal border border-seek-teal/30 hover:bg-seek-teal/20 transition font-medium"
-          >
-            Get SOL 🪂
           </a>
           {connected && balance !== null && (
             <span className="text-sm text-seek-teal font-medium">
@@ -120,15 +112,6 @@ export const Navbar: FC = () => {
           </a>
           <a href="/faq" className="block py-2 text-sm text-gray-400 hover:text-white" onClick={() => setMenuOpen(false)}>
             ❓ FAQ
-          </a>
-          <a
-            href="https://faucet.solana.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block py-2 text-sm text-seek-teal hover:text-seek-teal/80"
-            onClick={() => setMenuOpen(false)}
-          >
-            🪂 Get Free SOL
           </a>
         </div>
       )}

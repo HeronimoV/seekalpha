@@ -8,7 +8,7 @@ import {
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { PhantomWalletAdapter } from "@solana/wallet-adapter-wallets";
 
-const RPC_ENDPOINT = "https://api.devnet.solana.com";
+const RPC_ENDPOINT = "https://api.mainnet-beta.solana.com";
 
 import "@solana/wallet-adapter-react-ui/styles.css";
 
