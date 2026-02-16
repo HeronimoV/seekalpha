@@ -23,7 +23,7 @@ const steps: { emoji: string; title: string; description: string; link?: { url: 
     title: "Get Devnet SOL",
     description:
       "SeekAlpha is currently on Solana Devnet. Get free test SOL from the faucet — it's not real money, so experiment freely!",
-    link: { url: "https://solfaucet.com", label: "Get Free Devnet SOL →" },
+    link: { url: "https://faucet.solana.com", label: "Get Free Devnet SOL →" },
     note: "No GitHub login required — just paste your wallet address and click!",
   },
   {

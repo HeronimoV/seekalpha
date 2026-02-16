@@ -62,7 +62,7 @@ export const Navbar: FC = () => {
             About
           </a>
           <a
-            href="https://solfaucet.com"
+            href="https://faucet.solana.com"
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs px-2.5 py-1 rounded-full bg-seek-teal/10 text-seek-teal border border-seek-teal/30 hover:bg-seek-teal/20 transition font-medium"
@@ -122,7 +122,7 @@ export const Navbar: FC = () => {
             ❓ FAQ
           </a>
           <a
-            href="https://solfaucet.com"
+            href="https://faucet.solana.com"
             target="_blank"
             rel="noopener noreferrer"
             className="block py-2 text-sm text-seek-teal hover:text-seek-teal/80"
