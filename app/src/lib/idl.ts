@@ -1,4 +1,5 @@
-export const IDL = {
+export const IDL = 
+{
   "address": "4occZKXYz3tXjNQYr58YhAwWsCKsP2yZaYdSgQtgMY3a",
   "metadata": {
     "name": "seekalpha",
@@ -7,6 +8,55 @@ export const IDL = {
     "description": "SeekAlpha - Prediction Markets on Solana"
   },
   "instructions": [
+    {
+      "name": "cancel_market",
+      "docs": [
+        "Cancel a market (admin only) — only if no bets placed",
+        "Marks market as resolved with no outcome (cancelled)"
+      ],
+      "discriminator": [
+        205,
+        121,
+        84,
+        210,
+        222,
+        71,
+        150,
+        11
+      ],
+      "accounts": [
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "market",
+          "writable": true
+        },
+        {
+          "name": "admin",
+          "signer": true,
+          "relations": [
+            "config"
+          ]
+        }
+      ],
+      "args": []
+    },
     {
       "name": "claim_winnings",
       "docs": [
@@ -396,7 +446,7 @@ export const IDL = {
     {
       "name": "resolve_market",
       "docs": [
-        "Resolve a market (admin only)"
+        "Resolve a market (admin only) — can resolve early"
       ],
       "discriminator": [
         155,
@@ -653,6 +703,11 @@ export const IDL = {
       "code": 6012,
       "name": "BetTooLarge",
       "msg": "Bet exceeds maximum (0.01 SOL during soft launch)"
+    },
+    {
+      "code": 6013,
+      "name": "MarketHasBets",
+      "msg": "Cannot cancel market with existing bets"
     }
   ],
   "types": [
@@ -792,4 +847,4 @@ export const IDL = {
       }
     }
   ]
-} as const;
+};

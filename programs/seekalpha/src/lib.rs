@@ -165,7 +165,7 @@ pub mod seekalpha {
         Ok(())
     }
 
-    /// Resolve a market (admin only)
+    /// Resolve a market (admin only) — can resolve early
     pub fn resolve_market(
         ctx: Context<ResolveMarket>,
         outcome: bool, // true = YES won, false = NO won
@@ -174,14 +174,25 @@ pub mod seekalpha {
 
         require!(!market.resolved, SeekAlphaError::MarketResolved);
 
-        let clock = Clock::get()?;
+        market.resolved = true;
+        market.outcome = Some(outcome);
+
+        Ok(())
+    }
+
+    /// Cancel a market (admin only) — only if no bets placed
+    /// Marks market as resolved with no outcome (cancelled)
+    pub fn cancel_market(ctx: Context<ResolveMarket>) -> Result<()> {
+        let market = &mut ctx.accounts.market;
+
+        require!(!market.resolved, SeekAlphaError::MarketResolved);
         require!(
-            clock.unix_timestamp >= market.resolution_time,
-            SeekAlphaError::MarketNotExpired
+            market.yes_pool == 0 && market.no_pool == 0,
+            SeekAlphaError::MarketHasBets
         );
 
         market.resolved = true;
-        market.outcome = Some(outcome);
+        market.outcome = None; // None = cancelled, not YES or NO
 
         Ok(())
     }
@@ -462,4 +473,6 @@ pub enum SeekAlphaError {
     NotFlashMarket,
     #[msg("Bet exceeds maximum (0.01 SOL during soft launch)")]
     BetTooLarge,
+    #[msg("Cannot cancel market with existing bets")]
+    MarketHasBets,
 }

@@ -41,6 +41,7 @@ export default function AdminPage() {
   const [creating, setCreating] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
   const [resolvingId, setResolvingId] = useState<number | null>(null);
+  const [cancellingId, setCancellingId] = useState<number | null>(null);
 
   useEffect(() => {
     fetchAllMarkets()
@@ -182,6 +183,45 @@ export default function AdminPage() {
       setStatus(`❌ Resolve failed: ${err.message?.slice(0, 100)}`);
     } finally {
       setResolvingId(null);
+    }
+  };
+
+  const handleCancel = async (marketId: number) => {
+    try {
+      setCancellingId(marketId);
+      setStatus(`🔄 Cancelling market #${marketId}...`);
+
+      const provider = getProvider();
+      const program = getProgram(provider);
+      const configPda = getConfigPda();
+      const marketPda = getMarketPda(marketId);
+
+      const tx = await (program.methods as any)
+        .cancelMarket()
+        .accounts({
+          config: configPda,
+          market: marketPda,
+          admin: publicKey,
+        })
+        .transaction();
+
+      const { blockhash } = await connection.getLatestBlockhash();
+      tx.recentBlockhash = blockhash;
+      tx.feePayer = publicKey;
+
+      const signedTx = await signTransaction!(tx);
+      const sig = await connection.sendRawTransaction(signedTx.serialize());
+      await connection.confirmTransaction(sig, "confirmed");
+
+      setStatus(`✅ Market #${marketId} cancelled!`);
+
+      const updated = await fetchAllMarkets();
+      setMarkets(updated);
+    } catch (err: any) {
+      console.error("Cancel failed:", err);
+      setStatus(`❌ Cancel failed: ${err.message?.slice(0, 100)}`);
+    } finally {
+      setCancellingId(null);
     }
   };
 
@@ -352,6 +392,15 @@ export default function AdminPage() {
                     >
                       {resolvingId === market.id ? "..." : "❌ NO"}
                     </button>
+                    {totalPool === 0 && (
+                      <button
+                        onClick={() => handleCancel(market.id)}
+                        disabled={cancellingId === market.id}
+                        className="px-4 py-2 rounded-lg bg-gray-600 hover:bg-gray-500 text-white text-sm font-medium disabled:opacity-50"
+                      >
+                        {cancellingId === market.id ? "..." : "🗑️ Cancel"}
+                      </button>
+                    )}
                   </div>
                 </div>
               );
@@ -372,9 +421,10 @@ export default function AdminPage() {
               >
                 <div className="flex items-center gap-2 mb-1">
                   <span className={`text-xs px-2 py-0.5 rounded-full ${
+                    market.outcome === null ? "bg-gray-500/20 text-gray-400" :
                     market.outcome ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400"
                   }`}>
-                    {market.outcome ? "YES ✅" : "NO ❌"}
+                    {market.outcome === null ? "🚫 Cancelled" : market.outcome ? "YES ✅" : "NO ❌"}
                   </span>
                   <span className="text-xs text-gray-500">#{market.id}</span>
                 </div>
