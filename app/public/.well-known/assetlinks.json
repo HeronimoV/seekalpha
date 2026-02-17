@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "bet.seekalpha.app",
+    "sha256_cert_fingerprints": ["09:EF:A5:EA:70:EC:2C:21:CF:DD:D7:42:9C:36:CD:81:34:5D:5B:53:06:0D:5B:CD:68:D0:2C:AE:70:0B:F2:00"]
+  }
+}]
