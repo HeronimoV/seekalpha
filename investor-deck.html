@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SeekAlpha — Investor Deck 2026</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: #0a0a1a;
+    color: #e2e8f0;
+    line-height: 1.5;
+  }
+  .slide {
+    width: 100%;
+    min-height: 100vh;
+    padding: 60px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    page-break-after: always;
+    overflow: hidden;
+  }
+  .slide:last-child { page-break-after: auto; }
+  .slide::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #7c3aed, #06b6d4);
+  }
+  h1 {
+    font-size: 3.2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #7c3aed, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+    letter-spacing: -1px;
+  }
+  h2 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #7c3aed, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 32px;
+    letter-spacing: -0.5px;
+  }
+  h3 { font-size: 1.3rem; font-weight: 600; color: #94a3b8; margin-bottom: 20px; }
+  .subtitle { font-size: 1.4rem; color: #94a3b8; margin-bottom: 8px; }
+  .big-num { font-size: 3.5rem; font-weight: 800; color: #fff; }
+  .accent { color: #7c3aed; }
+  .teal { color: #06b6d4; }
+  .grid { display: grid; gap: 32px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+  .card {
+    background: rgba(124, 58, 237, 0.08);
+    border: 1px solid rgba(124, 58, 237, 0.2);
+    border-radius: 16px;
+    padding: 28px;
+  }
+  .card-teal {
+    background: rgba(6, 182, 212, 0.08);
+    border: 1px solid rgba(6, 182, 212, 0.2);
+  }
+  .card h4 { font-size: 1.1rem; color: #06b6d4; margin-bottom: 8px; }
+  .card p { color: #cbd5e1; font-size: 0.95rem; }
+  ul { list-style: none; padding: 0; }
+  ul li { padding: 8px 0; font-size: 1.05rem; color: #cbd5e1; }
+  ul li::before { content: '→ '; color: #7c3aed; font-weight: 700; }
+  .tag {
+    display: inline-block;
+    background: linear-gradient(135deg, #7c3aed, #06b6d4);
+    color: #fff;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .live-badge {
+    display: inline-block;
+    background: #10b981;
+    color: #fff;
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 1rem;
+    font-weight: 700;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
+  table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+  th { text-align: left; padding: 12px 16px; font-size: 0.9rem; color: #7c3aed; border-bottom: 2px solid rgba(124,58,237,0.3); font-weight: 700; }
+  td { padding: 12px 16px; font-size: 0.95rem; border-bottom: 1px solid rgba(255,255,255,0.06); color: #cbd5e1; }
+  td.win { color: #10b981; font-weight: 600; }
+  td.lose { color: #ef4444; }
+  .quote {
+    font-size: 1.5rem;
+    font-style: italic;
+    color: #a78bfa;
+    border-left: 4px solid #7c3aed;
+    padding-left: 24px;
+    margin: 32px 0;
+  }
+  .bar { height: 8px; border-radius: 4px; background: rgba(255,255,255,0.1); margin-top: 8px; }
+  .bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #7c3aed, #06b6d4); }
+  .logo-text {
+    font-size: 5rem;
+    font-weight: 900;
+    letter-spacing: -3px;
+    background: linear-gradient(135deg, #7c3aed, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .footer {
+    position: absolute;
+    bottom: 24px;
+    left: 80px;
+    right: 80px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #475569;
+  }
+  .timeline-item { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 20px; }
+  .timeline-dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    background: linear-gradient(135deg, #7c3aed, #06b6d4);
+    margin-top: 5px; flex-shrink: 0;
+  }
+  .timeline-dot.done { background: #10b981; }
+  .timeline-label { font-weight: 700; color: #fff; min-width: 80px; }
+  .timeline-text { color: #cbd5e1; }
+  .alloc-row { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
+  .alloc-bar { flex: 1; height: 32px; border-radius: 8px; display: flex; align-items: center; padding-left: 12px; font-weight: 600; font-size: 0.9rem; color: #fff; }
+  .center-content { text-align: center; align-items: center; }
+  @media print {
+    .slide { min-height: 100vh; padding: 40px 60px; }
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    @page { size: landscape; margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1: Title -->
+<div class="slide center-content" style="text-align:center; align-items:center;">
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+    <div class="logo-text">SeekAlpha</div>
+    <p style="font-size:1.8rem; color:#94a3b8; margin:16px 0 32px; font-weight:300;">Predict. Earn. Defy the Market.</p>
+    <div class="live-badge" style="margin-bottom:24px;">🟢 LIVE ON MAINNET</div>
+    <p style="font-size:1.1rem; color:#64748b; margin-top:24px;">Binary Prediction Markets on Solana</p>
+    <p style="font-size:0.95rem; color:#475569; margin-top:12px;">Investor Presentation — February 2026</p>
+  </div>
+  <div class="footer"><span>seekalpha.bet</span><span>Confidential</span></div>
+</div>
+
+<!-- SLIDE 2: The Opportunity -->
+<div class="slide">
+  <h2>The Opportunity</h2>
+  <div class="grid grid-2" style="gap:40px;">
+    <div>
+      <div class="card" style="margin-bottom:24px; text-align:center;">
+        <p style="color:#94a3b8; font-size:0.9rem;">Global Prediction Market Industry</p>
+        <div class="big-num">$50B+</div>
+      </div>
+      <div class="card card-teal" style="text-align:center;">
+        <p style="color:#94a3b8; font-size:0.9rem;">Polymarket Volume (2025)</p>
+        <div class="big-num" style="color:#06b6d4;">$9B</div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:24px; text-align:center; border-color:#10b981; background:rgba(16,185,129,0.08);">
+        <p style="color:#94a3b8; font-size:0.9rem;">Prediction Markets on Seeker dApp Store</p>
+        <div class="big-num" style="color:#10b981;">ZERO</div>
+        <p style="color:#64748b; font-size:0.85rem; margin-top:4px;">We're first.</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <p style="color:#94a3b8; font-size:0.9rem;">Solana Seeker Pre-orders</p>
+        <div class="big-num">150K+</div>
+        <p style="color:#64748b; font-size:0.85rem; margin-top:4px;">Built-in audience, day one</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><span>seekalpha.bet</span><span>2</span></div>
+</div>
+
+<!-- SLIDE 3: What is SeekAlpha? -->
+<div class="slide">
+  <h2>What is SeekAlpha?</h2>
+  <p style="font-size:1.3rem; color:#cbd5e1; margin-bottom:40px; max-width:700px;">
+    A <strong style="color:#fff;">binary prediction market</strong> on Solana where users bet YES or NO on real-world outcomes — and earn when they're right.
+  </p>
+  <div class="grid grid-3">
+    <div class="card" style="text-align:center;">
+      <div style="font-size:2.5rem; margin-bottom:8px;">🎯</div>
+      <h4>Binary Markets</h4>
+      <p>YES/NO bets on crypto, sports, politics, world events</p>
+    </div>
+    <div class="card card-teal" style="text-align:center;">
+      <div style="font-size:2.5rem; margin-bottom:8px;">⚡</div>
+      <h4>3% Fee Only</h4>
+      <p>Lowest in the industry. Fee only on winnings — lose nothing extra</p>
+    </div>
+    <div class="card" style="text-align:center;">
+      <div style="font-size:2.5rem; margin-bottom:8px;">🔗</div>
+      <h4>Fully On-Chain</h4>
+      <p>Transparent, verifiable, non-custodial. Your keys, your bets</p>
+    </div>
+  </div>
+  <div class="footer"><span>seekalpha.bet</span><span>3</span></div>
+</div>
+
+<!-- SLIDE 4: What We've Built -->
+<div class="slide">
+  <h2>What We've Built</h2>
+  <div style="display:flex; gap:40px; margin-bottom:32px;">
+    <div class="card" style="flex:1; text-align:center; border-color:#10b981; background:rgba(16,185,129,0.08);">
+      <p style="color:#94a3b8;">Development Time</p>
+      <div class="big-num" style="color:#10b981;">~2 Weeks</div>
+    </div>
+    <div class="card" style="flex:1; text-align:center; border-color:#10b981; background:rgba(16,185,129,0.08);">
+      <p style="color:#94a3b8;">Total Cost</p>
+      <div class="big-num" style="color:#10b981;">~$30</div>
+    </div>
+  </div>
+  <div class="grid grid-2">
+    <ul>
+      <li>Solana smart contract (Anchor/Rust) — deployed & verified</li>
+      <li>Full-stack React frontend with real-time updates</li>
+      <li>Flash markets (5-min, 15-min, 1-hr expiry)</li>
+      <li>Gamification: streaks, XP, badges, leaderboard</li>
+    </ul>
+    <ul>
+      <li>Wallet Connect (Phantom, Solflare, etc.)</li>
+      <li>Android APK packaged via TWA</li>
+      <li>5+ live markets with real SOL volume</li>
+      <li>Community: Discord, Twitter, growing user base</li>
+    </ul>
+  </div>
+  <p style="margin-top:24px; color:#94a3b8; font-size:0.95rem;">💡 Traditional dev cost for equivalent product: <strong style="color:#fff;">$50,000–$150,000</strong>. AI-powered development = 99.97% cost reduction.</p>
+  <div class="footer"><span>seekalpha.bet</span><span>4</span></div>
+</div>
+
+<!-- SLIDE 5: The Product -->
+<div class="slide">
+  <h2>The Product</h2>
+  <div class="live-badge" style="margin-bottom:32px;">🟢 LIVE ON SOLANA MAINNET — Feb 16, 2026</div>
+  <div class="grid grid-3" style="margin-top:16px;">
+    <div class="card">
+      <h4>🏠 Homepage</h4>
+      <p>Featured markets, trending bets, live volume stats, clean dark UI</p>
+    </div>
+    <div class="card card-teal">
+      <h4>📊 Markets</h4>
+      <p>Browse by category. Real-time odds. One-tap betting with SOL</p>
+    </div>
+    <div class="card">
+      <h4>💰 Betting Flow</h4>
+      <p>Select YES/NO → enter amount → confirm in wallet → instant on-chain settlement</p>
+    </div>
+    <div class="card card-teal">
+      <h4>📁 Portfolio</h4>
+      <p>Track active bets, P&L, claim winnings. All verifiable on-chain</p>
+    </div>
+    <div class="card">
+      <h4>🏆 Leaderboard</h4>
+      <p>XP, win streaks, badges. Social proof drives engagement & retention</p>
+    </div>
+    <div class="card card-teal">
+      <h4>📱 Mobile APK</h4>
+      <p>Packaged as Android TWA. Submitted to Seeker dApp Store Feb 17</p>
+    </div>
+  </div>
+  <div class="footer"><span>seekalpha.bet</span><span>5</span></div>
+</div>
+
+<!-- SLIDE 6: Our Edge -->
+<div class="slide">
+  <h2>Our Edge</h2>
+  <div class="grid grid-2" style="gap:28px;">
+    <div class="card">
+      <h4>🥇 First Mover on Seeker</h4>
+      <p>Zero prediction markets on the Seeker dApp Store. We're the first submission. 150K+ devices launching with no competitor.</p>
+    </div>
+    <div class="card card-teal">
+      <h4>💸 Lowest Fees</h4>
+      <p>3% on winnings only. Polymarket: 5-10%. Kalshi: 5-15%. We undercut everyone.</p>
+    </div>
+    <div class="card card-teal">
+      <h4>🔓 No KYC Required</h4>
+      <p>Connect wallet, start betting. No ID upload, no waitlists, no geographic blocks.</p>
+    </div>
+    <div class="card">
+      <h4>📱 Mobile-First</h4>
+      <p>Built for Seeker's mobile form factor. TWA-packaged. Native app feel.</p>
+    </div>
+    <div class="card">
+      <h4>🤖 AI-Powered Development</h4>
+      <p>Built for ~$30 in 2 weeks. Traditional cost: $50-150K. We move 100x faster.</p>
+    </div>
+    <div class="card card-teal">
+      <h4>🔓 Open Source</h4>
+      <p>Fully transparent codebase. Builds trust. Enables community contributions.</p>
+    </div>
+  </div>
+  <div class="footer"><span>seekalpha.bet</span><span>6</span></div>
+</div>
+
+<!-- SLIDE 7: Competitive Landscape -->
+<div class="slide">
+  <h2>Competitive Landscape</h2>
+  <table>
+    <tr>
+      <th></th>
+      <th style="color:#10b981;">SeekAlpha</th>
+      <th>Polymarket</th>
+      <th>Kalshi</th>
+      <th>Azuro</th>
+    </tr>
+    <tr>
+      <td style="color:#fff; font-weight:600;">Fees</td>
+      <td class="win">3%</td>
+      <td>5-10%</td>
+      <td>5-15%</td>
+      <td>5-10%</td>
+    </tr>
+    <tr>
+      <td style="color:#fff; font-weight:600;">KYC Required</td>
+      <td class="win">No</td>
+      <td class="lose">Yes</td>
+      <td class="lose">Yes (heavy)</td>
+      <td class="win">No</td>
+    </tr>
+    <tr>
+      <td style="color:#fff; font-weight:600;">Blockchain</td>
+      <td class="win">Solana</td>
+      <td>Polygon</td>
+      <td>Centralized</td>
+      <td>Multi-chain</td>
+    </tr>
+    <tr>
+      <td style="color:#fff; font-weight:600;">Mobile App</td>
+      <td class="win">Yes (TWA)</td>
+      <td class="lose">No native</td>
+      <td>iOS/Android</td>
+      <td class="lose">No</td>
+    </tr>
+    <tr>
+      <td style="color:#fff; font-weight:600;">Seeker dApp Store</td>
+      <td class="win">✅ Submitted</td>
+      <td class="lose">No</td>
+      <td class="lose">No</td>
+      <td class="lose">No</td>
+    </tr>
+    <tr>
+      <td style="color:#fff; font-weight:600;">Flash Markets</td>
+      <td class="win">Yes (5m-1hr)</td>
+      <td class="lose">No</td>
+      <td class="lose">No</td>
+      <td class="lose">No</td>
+    </tr>
+    <tr>
+      <td style="color:#fff; font-weight:600;">Speed to Market</td>
+      <td class="win">2 weeks / $30</td>
+      <td>Years / $45M+</td>
+      <td>Years / $100M+</td>
+      <td>Years / $10M+</td>
+    </tr>
+  </table>
+  <div class="footer"><span>seekalpha.bet</span><span>7</span></div>
+</div>
+
+<!-- SLIDE 8: Revenue Model -->
+<div class="slide">
+  <h2>Revenue Model</h2>
+  <p style="font-size:1.2rem; color:#cbd5e1; margin-bottom:32px;">Simple: <strong style="color:#fff;">3% fee on net winnings</strong>. No hidden costs. Scales with volume.</p>
+  <table>
+    <tr><th>Monthly Volume</th><th>Monthly Revenue (3%)</th><th>Annual Revenue</th></tr>
+    <tr><td>$10,000</td><td>$300</td><td>$3,600</td></tr>
+    <tr><td>$25,000</td><td>$750</td><td style="color:#eab308; font-weight:600;">$9,000</td></tr>
+    <tr><td>$50,000</td><td>$1,500</td><td style="color:#10b981; font-weight:600;">$18,000</td></tr>
+    <tr><td>$100,000</td><td>$3,000</td><td style="color:#10b981; font-weight:600;">$36,000</td></tr>
+    <tr><td>$500,000</td><td>$15,000</td><td style="color:#10b981; font-weight:600;">$180,000</td></tr>
+  </table>
+  <div style="margin-top:28px; display:flex; gap:32px;">
+    <div class="card" style="flex:1; text-align:center;">
+      <p style="color:#94a3b8;">Break-Even (min investment)</p>
+      <div style="font-size:2rem; font-weight:800; color:#eab308;">~$17K/mo volume</div>
+    </div>
+    <div class="card card-teal" style="flex:1; text-align:center;">
+      <p style="color:#94a3b8;">Break-Even (max investment)</p>
+      <div style="font-size:2rem; font-weight:800; color:#06b6d4;">~$33K/mo volume</div>
+    </div>
+  </div>
+  <div class="footer"><span>seekalpha.bet</span><span>8</span></div>
+</div>
+
+<!-- SLIDE 9: Roadmap -->
+<div class="slide">
+  <h2>6-Month Roadmap</h2>
+  <div style="max-width:700px;">
+    <div class="timeline-item">
+      <div class="timeline-dot done"></div>
+      <div><span class="timeline-label" style="color:#10b981;">Month 1 ✅</span> <span class="timeline-text">Build & Polish — Smart contract, frontend, gamification, APK</span></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot done"></div>
+      <div><span class="timeline-label" style="color:#10b981;">Month 2 ✅</span> <span class="timeline-text">Mainnet Deploy — Live Feb 16. dApp Store submitted Feb 17</span></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div><span class="timeline-label">Month 3</span> <span class="timeline-text">Security Audit — Professional smart contract audit, bug bounty program</span></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div><span class="timeline-label">Month 4</span> <span class="timeline-text">dApp Store Launch — Seeker devices ship, featured placement, $SKR airdrop</span></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div><span class="timeline-label">Month 5</span> <span class="timeline-text">Growth — Marketing push, referral program, community events, partnerships</span></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div><span class="timeline-label">Month 6</span> <span class="timeline-text">Revenue — Target sustainable volume, expand market categories, evaluate Series A</span></div>
+    </div>
+  </div>
+  <div class="tag" style="margin-top:24px;">⚡ AHEAD OF SCHEDULE — Months 1-2 completed in &lt;3 weeks</div>
+  <div class="footer"><span>seekalpha.bet</span><span>9</span></div>
+</div>
+
+<!-- SLIDE 10: Scenario Analysis -->
+<div class="slide">
+  <h2>Scenario Analysis — Year 1</h2>
+  <div class="grid grid-4" style="gap:20px; margin-bottom:32px;">
+    <div class="card" style="text-align:center; border-color:#ef4444; background:rgba(239,68,68,0.06);">
+      <p style="color:#94a3b8; font-size:0.8rem;">WORST CASE (20%)</p>
+      <div style="font-size:1.8rem; font-weight:800; color:#ef4444;">$3.6K</div>
+      <p style="color:#94a3b8; font-size:0.85rem; margin-top:8px;">$10K/mo vol</p>
+      <p style="color:#ef4444; font-size:0.85rem;">-40% to -70% ROI</p>
+    </div>
+    <div class="card" style="text-align:center; border-color:#eab308; background:rgba(234,179,8,0.06);">
+      <p style="color:#94a3b8; font-size:0.8rem;">CONSERVATIVE (30%)</p>
+      <div style="font-size:1.8rem; font-weight:800; color:#eab308;">$9K</div>
+      <p style="color:#94a3b8; font-size:0.85rem; margin-top:8px;">$25K/mo vol</p>
+      <p style="color:#eab308; font-size:0.85rem;">-25% to +50% ROI</p>
+    </div>
+    <div class="card" style="text-align:center; border-color:#10b981; background:rgba(16,185,129,0.06);">
+      <p style="color:#94a3b8; font-size:0.8rem;">MODERATE (35%)</p>
+      <div style="font-size:1.8rem; font-weight:800; color:#10b981;">$36K</div>
+      <p style="color:#94a3b8; font-size:0.85rem; margin-top:8px;">$100K/mo vol</p>
+      <p style="color:#10b981; font-size:0.85rem;">+200% to +500% ROI</p>
+    </div>
+    <div class="card" style="text-align:center; border-color:#7c3aed; background:rgba(124,58,237,0.06);">
+      <p style="color:#94a3b8; font-size:0.8rem;">BEST CASE (15%)</p>
+      <div style="font-size:1.8rem; font-weight:800; color:#7c3aed;">$180K</div>
+      <p style="color:#94a3b8; font-size:0.85rem; margin-top:8px;">$500K/mo vol</p>
+      <p style="color:#7c3aed; font-size:0.85rem;">+1400% to +2900% ROI</p>
+    </div>
+  </div>
+  <div class="card" style="text-align:center; border-color:#06b6d4; background:rgba(6,182,212,0.08);">
+    <p style="color:#94a3b8; margin-bottom:4px;">Probability-Weighted Expected Revenue (Year 1)</p>
+    <div class="big-num" style="color:#06b6d4;">$18K – $30K</div>
+    <p style="color:#10b981; font-weight:600; margin-top:8px;">Expected ROI: +150% to +400%</p>
+  </div>
+  <div class="footer"><span>seekalpha.bet</span><span>10</span></div>
+</div>
+
+<!-- SLIDE 11: The Ask -->
+<div class="slide">
+  <h2>The Ask</h2>
+  <div style="text-align:center; margin-bottom:40px;">
+    <div class="big-num" style="font-size:4rem;">$6,000 – $12,000</div>
+    <p style="color:#94a3b8; font-size:1.1rem;">Seed Investment</p>
+  </div>
+  <div style="max-width:600px; margin:0 auto;">
+    <div class="alloc-row">
+      <span style="min-width:120px; color:#fff; font-weight:600;">AI Dev Tools</span>
+      <div class="alloc-bar" style="background:linear-gradient(90deg,#7c3aed,#6d28d9); width:60%;">$3.6K–$7.2K</div>
+    </div>
+    <div class="alloc-row">
+      <span style="min-width:120px; color:#fff; font-weight:600;">Security Audit</span>
+      <div class="alloc-bar" style="background:linear-gradient(90deg,#06b6d4,#0891b2); width:45%;">$1.5K–$3K</div>
+    </div>
+    <div class="alloc-row">
+      <span style="min-width:120px; color:#fff; font-weight:600;">Treasury</span>
+      <div class="alloc-bar" style="background:linear-gradient(90deg,#10b981,#059669); width:20%;">$500–$1K</div>
+    </div>
+    <div class="alloc-row">
+      <span style="min-width:120px; color:#fff; font-weight:600;">LLC Formation</span>
+      <div class="alloc-bar" style="background:linear-gradient(90deg,#eab308,#ca8a04); width:15%;">$400–$700</div>
+    </div>
+    <div class="alloc-row">
+      <span style="min-width:120px; color:#fff; font-weight:600;">Marketing</span>
+      <div class="alloc-bar" style="background:linear-gradient(90deg,#f472b6,#ec4899); width:12%;">$200–$500</div>
+    </div>
+  </div>
+  <div class="footer"><span>seekalpha.bet</span><span>11</span></div>
+</div>
+
+<!-- SLIDE 12: What Investors Get -->
+<div class="slide">
+  <h2>What Investors Get</h2>
+  <div class="grid grid-2" style="gap:32px;">
+    <div class="card" style="text-align:center;">
+      <div style="font-size:3rem; margin-bottom:12px;">📈</div>
+      <h4 style="font-size:1.3rem;">Equity Stake in LLC</h4>
+      <p>Proportional ownership in the SeekAlpha LLC. Legal, structured, protected.</p>
+    </div>
+    <div class="card card-teal" style="text-align:center;">
+      <div style="font-size:3rem; margin-bottom:12px;">📊</div>
+      <h4 style="font-size:1.3rem;">Monthly On-Chain Reports</h4>
+      <p>Volume, revenue, users — all verifiable on the Solana blockchain. No black boxes.</p>
+    </div>
+    <div class="card card-teal" style="text-align:center;">
+      <div style="font-size:3rem; margin-bottom:12px;">🔍</div>
+      <h4 style="font-size:1.3rem;">Full Transparency</h4>
+      <p>Open-source code. Public smart contract. Every dollar tracked and accounted for.</p>
+    </div>
+    <div class="card" style="text-align:center;">
+      <div style="font-size:3rem; margin-bottom:12px;">🚀</div>
+      <h4 style="font-size:1.3rem;">First Look at Future Rounds</h4>
+      <p>Priority access and pro-rata rights if we raise additional capital.</p>
+    </div>
+  </div>
+  <div class="footer"><span>seekalpha.bet</span><span>12</span></div>
+</div>
+
+<!-- SLIDE 13: Milestones -->
+<div class="slide">
+  <h2>Milestones — All On-Chain Verifiable</h2>
+  <div style="max-width:700px;">
+    <div class="timeline-item">
+      <div class="timeline-dot done"></div>
+      <div><span class="timeline-label" style="color:#10b981;">Feb 2 ✅</span> <span class="timeline-text">Development begins — smart contract + frontend</span></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot done"></div>
+      <div><span class="timeline-label" style="color:#10b981;">Feb 16 ✅</span> <span class="timeline-text">Mainnet deployment — live on Solana with real SOL</span></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot done"></div>
+      <div><span class="timeline-label" style="color:#10b981;">Feb 17 ✅</span> <span class="timeline-text">Seeker dApp Store submission — awaiting review</span></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div><span class="timeline-label">Mar</span> <span class="timeline-text">dApp Store approval & listing. First 100 users</span></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div><span class="timeline-label">Apr</span> <span class="timeline-text">Security audit completed. LLC formed. Bug bounty live</span></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div><span class="timeline-label">May</span> <span class="timeline-text">Seeker devices ship. Featured in dApp Store. $SKR airdrop wave</span></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div><span class="timeline-label">Jun</span> <span class="timeline-text">1,000+ active users. Referral program launch. Partnership deals</span></div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div><span class="timeline-label">Aug</span> <span class="timeline-text">Sustainable monthly revenue. Evaluate growth trajectory & Series A</span></div>
+    </div>
+  </div>
+  <div class="footer"><span>seekalpha.bet</span><span>13</span></div>
+</div>
+
+<!-- SLIDE 14: Why Now -->
+<div class="slide">
+  <h2>Why Now</h2>
+  <div class="grid grid-2" style="gap:28px; margin-bottom:40px;">
+    <div class="card">
+      <h4>📱 Seeker is Launching</h4>
+      <p>150K+ devices shipping in 2026. A captive crypto-native audience looking for dApps.</p>
+    </div>
+    <div class="card card-teal">
+      <h4>🏪 Empty dApp Store</h4>
+      <p>First movers get featured placement, organic discovery, and brand establishment.</p>
+    </div>
+    <div class="card card-teal">
+      <h4>🪂 $SKR Airdrop</h4>
+      <p>Seeker holders receive $SKR tokens. Free money looking for on-chain use cases. We're one.</p>
+    </div>
+    <div class="card">
+      <h4>📈 Markets are Trending</h4>
+      <p>Prediction markets hit mainstream in 2024-25. Polymarket proved the model. We bring it to Solana mobile.</p>
+    </div>
+  </div>
+  <div class="quote">
+    "The best time to build on Solana was 2021.<br>The second best time is right now."
+  </div>
+  <div class="footer"><span>seekalpha.bet</span><span>14</span></div>
+</div>
+
+<!-- SLIDE 15: Closing -->
+<div class="slide center-content" style="text-align:center;">
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+    <div class="logo-text" style="font-size:4rem; margin-bottom:16px;">SeekAlpha</div>
+    <p style="font-size:1.6rem; color:#94a3b8; margin-bottom:48px;">Let's build the future of prediction markets.</p>
+    <div style="display:flex; gap:40px; justify-content:center; margin-bottom:40px;">
+      <div>
+        <p style="color:#7c3aed; font-weight:600;">Website</p>
+        <p style="color:#fff; font-size:1.2rem;">seekalpha.bet</p>
+      </div>
+      <div>
+        <p style="color:#7c3aed; font-weight:600;">Twitter</p>
+        <p style="color:#fff; font-size:1.2rem;">@Seek_Alpha_</p>
+      </div>
+      <div>
+        <p style="color:#7c3aed; font-weight:600;">Discord</p>
+        <p style="color:#fff; font-size:1.2rem;">discord.gg/seekalpha</p>
+      </div>
+    </div>
+    <div class="live-badge">🟢 LIVE NOW — seekalpha.bet</div>
+  </div>
+  <div class="footer"><span>seekalpha.bet</span><span>Confidential — February 2026</span></div>
+</div>
+
+</body>
+</html>
