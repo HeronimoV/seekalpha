@@ -73,7 +73,7 @@ function buildLeaderboard(predictions: OnChainPrediction[], markets: OnChainMark
 
   // Convert to array, filter min 2 predictions, sort by win rate
   const leaderboard: UserStats[] = [];
-  for (const [wallet, data] of userMap) {
+  for (const [wallet, data] of Array.from(userMap.entries())) {
     if (data.predictions < 2) continue;
     const resolved = data.wins + data.losses;
     const winRate = resolved > 0 ? (data.wins / resolved) * 100 : 0;
