@@ -1,4 +1,5 @@
 use anchor_lang::prelude::*;
+use anchor_lang::system_program;
 
 declare_id!("4occZKXYz3tXjNQYr58YhAwWsCKsP2yZaYdSgQtgMY3a");
 
@@ -246,19 +247,37 @@ pub mod seekalpha {
             .unwrap();
         let net_winnings = gross_winnings.checked_sub(fee).unwrap();
 
-        // Transfer winnings from vault to user
+        // Transfer winnings from vault PDA to user via CPI
         let market_id = market.id.to_le_bytes();
-        let seeds = &[b"vault", market_id.as_ref(), &[ctx.bumps.vault]];
-        let signer_seeds = &[&seeds[..]];
+        let bump = ctx.bumps.vault;
+        let signer_seeds: &[&[&[u8]]] = &[&[b"vault", market_id.as_ref(), &[bump]]];
 
         // Transfer net winnings to user
-        **ctx.accounts.vault.to_account_info().try_borrow_mut_lamports()? -= net_winnings;
-        **ctx.accounts.user.to_account_info().try_borrow_mut_lamports()? += net_winnings;
+        system_program::transfer(
+            CpiContext::new_with_signer(
+                ctx.accounts.system_program.to_account_info(),
+                system_program::Transfer {
+                    from: ctx.accounts.vault.to_account_info(),
+                    to: ctx.accounts.user.to_account_info(),
+                },
+                signer_seeds,
+            ),
+            net_winnings,
+        )?;
 
         // Transfer fee to treasury
         if fee > 0 {
-            **ctx.accounts.vault.to_account_info().try_borrow_mut_lamports()? -= fee;
-            **ctx.accounts.treasury.to_account_info().try_borrow_mut_lamports()? += fee;
+            system_program::transfer(
+                CpiContext::new_with_signer(
+                    ctx.accounts.system_program.to_account_info(),
+                    system_program::Transfer {
+                        from: ctx.accounts.vault.to_account_info(),
+                        to: ctx.accounts.treasury.to_account_info(),
+                    },
+                    signer_seeds,
+                ),
+                fee,
+            )?;
         }
 
         prediction.claimed = true;
