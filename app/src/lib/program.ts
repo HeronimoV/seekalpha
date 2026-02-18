@@ -175,6 +175,33 @@ export async function fetchUserPrediction(
   }
 }
 
+// ─── FETCH ALL PREDICTIONS ───
+
+export interface OnChainPrediction {
+  user: string;
+  market: string;
+  amount: number; // in SOL
+  position: boolean;
+  claimed: boolean;
+}
+
+export async function fetchAllPredictions(): Promise<OnChainPrediction[]> {
+  try {
+    const program = getReadOnlyProgram();
+    const allPredictions = await (program.account as any).prediction.all();
+    return allPredictions.map((p: any) => ({
+      user: p.account.user.toString(),
+      market: p.account.market.toString(),
+      amount: p.account.amount.toNumber() / LAMPORTS_PER_SOL,
+      position: p.account.position,
+      claimed: p.account.claimed,
+    }));
+  } catch (err) {
+    console.error("Failed to fetch predictions:", err);
+    return [];
+  }
+}
+
 // ─── WRITE FUNCTIONS (return instruction builders for wallet signing) ───
 
 export function getProgram(provider: AnchorProvider) {
