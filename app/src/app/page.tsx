@@ -199,8 +199,7 @@ export default function Home() {
       {/* Closing Soon */}
       {!loading && !error && <ClosingSoon markets={markets} />}
 
-      {/* Activity Feed */}
-      {!loading && !error && <ActivityFeed />}
+      {/* Activity Feed — removed: too much scrolling before actual markets */}
 
       {/* Active Markets */}
       {!loading && !error && processedMarkets.active.length > 0 && (
