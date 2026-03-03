@@ -4,7 +4,7 @@ use anchor_lang::system_program;
 declare_id!("4occZKXYz3tXjNQYr58YhAwWsCKsP2yZaYdSgQtgMY3a");
 
 pub const PLATFORM_FEE_BPS: u16 = 300; // 3%
-pub const MAX_BET_LAMPORTS: u64 = 10_000_000; // 0.01 SOL = 10,000,000 lamports
+pub const MAX_BET_LAMPORTS: u64 = 250_000_000; // 0.25 SOL = 250,000,000 lamports
 pub const FLASH_1H_DURATION: i64 = 3600; // 1 hour in seconds
 pub const FLASH_24H_DURATION: i64 = 86400; // 24 hours in seconds
 
