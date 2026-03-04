@@ -1,7 +1,7 @@
 ---
 name: seekalpha
 description: "Browse and bet on prediction markets on Solana via SeekAlpha — the first prediction market on the Solana dApp Store. Use when: user wants to see prediction markets, check odds, place a bet/prediction, view their predictions, check platform stats, or find flash markets. Don't use when: user wants crypto prices without betting (use crypto-prices skill), wants to swap tokens (use solana_swap tool), or wants wallet balance (use solana_balance tool)."
-version: "1.0.0"
+version: "1.1.0"
 emoji: "🔮"
 image: "https://seekalpha.bet/icon-512.png"
 requires:
