@@ -258,12 +258,12 @@ export const MarketCard: FC<MarketCardProps> = ({ market }) => {
               step="0.01"
               disabled={loading}
             />
-            <p className="text-xs text-gray-600 mt-1 ml-1">Max: 0.01 SOL per prediction</p>
+            <p className="text-xs text-gray-600 mt-1 ml-1">Max: 0.25 SOL per prediction</p>
           </div>
 
           {/* Quick amounts */}
           <div className="flex gap-2">
-            {[0.001, 0.005, 0.01].map((amt) => (
+            {[0.05, 0.1, 0.25].map((amt) => (
               <button
                 key={amt}
                 onClick={() => setBetAmount(amt.toString())}

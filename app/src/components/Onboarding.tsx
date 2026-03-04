@@ -22,7 +22,7 @@ const steps: { emoji: string; title: string; description: string; link?: { url: 
     emoji: "💰",
     title: "Fund Your Wallet",
     description:
-      "SeekAlpha is live on Solana mainnet! You need real SOL in your Phantom wallet. Max bet is 0.01 SOL during our soft launch.",
+      "SeekAlpha is live on Solana mainnet! You need real SOL in your Phantom wallet. Max bet is 0.25 SOL.",
     link: { url: "https://phantom.app", label: "Get Phantom →" },
   },
   {

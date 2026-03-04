@@ -16,7 +16,7 @@ const FAQS: FAQItem[] = [
   {
     question: "How do I get started?",
     answer:
-      "1. Install the Phantom wallet (phantom.app)\n2. Fund your wallet with SOL\n3. Visit seekalpha.bet and click 'Select Wallet' to connect\n4. Browse markets, pick one, and place your prediction!\n\nConnect your Phantom wallet with real SOL to start predicting! Max bet is 0.01 SOL during our soft launch.",
+      "1. Install the Phantom wallet (phantom.app)\n2. Fund your wallet with SOL\n3. Visit seekalpha.bet and click 'Select Wallet' to connect\n4. Browse markets, pick one, and place your prediction!\n\nConnect your Phantom wallet with real SOL to start predicting! Max bet is 0.25 SOL.",
   },
   {
     question: "How does betting work?",
@@ -51,7 +51,7 @@ const FAQS: FAQItem[] = [
   {
     question: "Is this on mainnet?",
     answer:
-      "Yes! SeekAlpha is live on Solana mainnet 🚀 We're in a soft launch phase with a max bet of 0.01 SOL per prediction. You'll need real SOL in your wallet to participate. Follow us on Twitter (@Seek_Alpha_) for updates as we raise limits!",
+      "Yes! SeekAlpha is live on Solana mainnet 🚀 Max bet is 0.25 SOL per prediction. You'll need real SOL in your wallet to participate. Follow us on Twitter (@Seek_Alpha_) for updates as we raise limits!",
   },
   {
     question: "What wallets are supported?",

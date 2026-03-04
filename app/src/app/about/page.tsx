@@ -125,7 +125,7 @@ export default function AboutPage() {
               <div className="pb-6">
                 <div className="text-sm text-seek-teal font-medium">Phase 2 — Mainnet Soft Launch ✅</div>
                 <h3 className="font-semibold">Live on Mainnet!</h3>
-                <p className="text-sm text-gray-400">Deployed to Solana mainnet with 0.01 SOL max bet. Real SOL, real predictions. Soft launch for safety.</p>
+                <p className="text-sm text-gray-400">Deployed to Solana mainnet with 0.25 SOL max bet. Real SOL, real predictions.</p>
               </div>
             </div>
             <div className="flex gap-4">
