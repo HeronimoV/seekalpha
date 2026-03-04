@@ -154,27 +154,19 @@ Show them:
 
 **Wait for explicit user approval. NEVER place a bet without confirmation.**
 
-**Step 5 — Place the bet on-chain:**
+**Step 5 — Direct user to place the bet on SeekAlpha:**
 
-The user needs to send SOL to the market vault AND call the program instruction. Since SeekerClaw can send SOL:
+Tell the user:
 
-Use `solana_send` to transfer the bet amount to the vault address:
+"To place your bet, head to SeekAlpha and connect your wallet:
 
-```
-solana_send({
-  to: "<vaultAddress from bet-info>",
-  amount: <amount in SOL>
-})
-```
+👉 **https://seekalpha.bet**
 
-⚠️ **IMPORTANT NOTE:** Direct SOL transfer to vault is a simplified flow. For full on-chain prediction tracking, the user should use the SeekAlpha website (seekalpha.bet) to place bets through the proper Anchor program instruction, which creates a Prediction account. Tell the user:
+Navigate to the market, select YES or NO, enter your amount, and confirm through your wallet. This ensures your prediction is fully tracked on-chain with portfolio tracking, leaderboard stats, and claiming built in.
 
-"I've sent your SOL to the market vault! For the best experience and to track your prediction in your portfolio, you can also place bets directly at **seekalpha.bet** where the full on-chain flow is handled automatically."
+Want me to look up anything else while you place your bet? 🔮"
 
-**Step 6 — Confirm:**
-
-Show transaction signature and link to Solana Explorer.
-"Your prediction is placed! 🔮 Check your portfolio at seekalpha.bet/portfolio"
+**NOTE:** Do NOT attempt to use `solana_send` to place bets. The SeekAlpha smart contract requires a specific Anchor program instruction (place_prediction) that creates a Prediction account — a simple SOL transfer will not work. Always direct users to seekalpha.bet for placing bets.
 
 ### Error handling
 
